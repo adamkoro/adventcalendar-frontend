@@ -1,12 +1,5 @@
 <template>
-  <NuxtLayout>
-    <NuxtLoadingIndicator color="#FE7C3F" />
-    <NuxtPage />
-  </NuxtLayout>
+  <div>
+    <NuxtWelcome />
+  </div>
 </template>
-<script setup>
-useHead({
-  title: 'Adventi Kalendárium',
-  link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
-})
-</script>
