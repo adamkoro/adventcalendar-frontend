@@ -126,6 +126,7 @@ const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
 const selected = ref([users[1]])
 const deleteSelectedUser = ref('')
+const toast = useToast()
 
 function select (row) {
   const index = selected.value.findIndex((item) => item.id === row.id)
@@ -181,6 +182,7 @@ async function deleteUser(event: FormSubmitEvent<deleteUserSchema>) {
   }).finally(() => {
     isDeleteOpen.value = false
     fetchUsers()
+    toast.add({ title: 'User successfully deleted',description: deleteSelectedUser.value+' deleted', icon: 'i-heroicons-check-circle-20-solid' })
   })
 }
 
