@@ -17,6 +17,11 @@
                     <UInput v-model="state.password" type="password" placeholder="Enter your password..."/>
                 </UFormGroup>
                 </div>
+                <Ucard v-model="isLoginError">
+                    <div class="text-center text-red-500">
+                    {{ loginError }}
+                    </div>
+                </Ucard>
                 <div class="flex justify-center p-4">
                     <UButton type="submit" size="xl" label="Login" >
                         <template #trailing>
@@ -25,20 +30,6 @@
                     </UButton>
                 </div>
             </UForm>
-            <UModal v-model="isOpen" prevent-close>
-                <UCard :ui="{ }">
-                    <template #header>
-                    <div class="flex items-center justify-between ">
-                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                            Login Error
-                        </h3>
-                        <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isOpen = false" />
-                    </div>
-                    </template>
-                    <Placeholder class="h-32" />
-                    {{ modalError }}
-                </UCard>
-            </UModal>
             <LightDarkButton/>
         </div>
     </div>
@@ -49,8 +40,9 @@ import { ref } from 'vue'
 import { string, object, minLength, Input } from 'valibot'
 import type { FormError, FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
 
-const isOpen = ref(false)
-const modalError = ref('')
+const isLoginError = ref(false)
+const loginError = ref('')
+const toast = useToast()
 const schema = object({
     username: string([minLength(1, 'Required')]),
     password: string([minLength(1, 'Required')])
@@ -74,16 +66,18 @@ async function login(event: FormSubmitEvent<Schema>) {
         credentials: 'include',
         })
         if (error.value != null){
-            isOpen.value = true
-            modalError.value = error.value.data.error
+            isLoginError.value = true
+            loginError.value = error.value.data.error
             return
         }
         if (data.value.status == 'Login successful') {
             setCookie("username", state.value.username)
             navigateTo('/admin/home',{ redirect: true })
+            toast.add({ title: 'Login successful', description: 'You have been logged in successfully as '+state.value.username, icon: 'i-heroicons-check-circle-20-solid' })
+
         }
         else {
-            isOpen.value = true
+            isLoginError.value = true
         }
     }
 useHead({
