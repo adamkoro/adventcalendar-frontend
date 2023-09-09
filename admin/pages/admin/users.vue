@@ -6,12 +6,20 @@
         <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for user..." />
       </div>
       <div class="w-auto">
-        <UButton icon="i-heroicons-arrow-path-20-solid" label="Update" @click="fetchUsers" />
+        <UTooltip text="Update user list">
+          <UButton icon="i-heroicons-arrow-path-20-solid" label="Refresh" @click="fetchUsers" />
+        </UTooltip>
       </div>
       <div class="w-auto justify-end space-x-2">
-        <UButton icon="i-heroicons-plus-20-solid" label="Create" @click="isCreateOpen = true" />
-        <UButton icon="i-heroicons-pencil-square-20-solid" label="Edit" @click="isEditOpen = true" />
-        <UButton icon="i-heroicons-trash-20-solid" label="Delete" @click="isDeleteOpen = true" />
+        <UTooltip text="Create new user">
+          <UButton icon="i-heroicons-plus-20-solid" label="Create" @click="isCreateOpen = true" />
+        </UTooltip>
+        <UTooltip text="Edit selected user (only 1)">
+          <UButton icon="i-heroicons-pencil-square-20-solid" label="Edit" @click="isEditOpen = true" />
+        </UTooltip>
+        <UTooltip text="Delete selected user(s)">
+          <UButton icon="i-heroicons-trash-20-solid" label="Delete" @click="isDeleteOpen = true" />
+        </UTooltip>
       </div>
     </div>
     <UTable v-model="selected" @select="select" :rows="filteredRows" :columns="columns" :sort="{ column: 'title' }"
@@ -118,12 +126,16 @@
               @click="(isDeleteOpen = false) && (deleteSelectedUser = '')" />
           </div>
         </template>
-        <div v-if="deleteSelectedUser">
-          Are you sure you want to delete {{ deleteSelectedUser }}?
+        <div v-if="deleteSelectedUser" class="flex flex-row gap-1">
+          <div class="">Are you sure you want to delete</div>
+          <div class="text-red-600">{{ deleteSelectedUser }}</div>
+          <div class="">?</div>
         </div>
         <div v-else>
-          <div v-if="selected">
-            Are you sure you want to delete {{ selected.length - 1 }} users?
+          <div v-if="selected" class="flex flex-row gap-1">
+            <div class="">Are you sure you want to delete</div>
+            <div class="text-red-600">{{ selected.length - 1 }} user(s)</div>
+            <div class="">?</div>
           </div>
         </div>
         <template #footer>
@@ -166,9 +178,9 @@ const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
-const selected = ref([users[0]])
-const deleteSelectedUser = ref('')
-const editSelectedUser = ref('')
+let selected = ref([users[0]])
+let deleteSelectedUser = ref('')
+let editSelectedUser = ref('')
 const toast = useToast()
 
 const columns = [
