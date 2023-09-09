@@ -1,6 +1,10 @@
 <template>
     <NavBar/>
+    <div>
+        <div class="w-full p-2 flex justify-between items-center"/>
+    </div>
 </template>
+
 <script setup>
 useHead({
     title: `Admin Home`,

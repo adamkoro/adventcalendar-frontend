@@ -1,6 +1,6 @@
 <template>
+  <NavBar />
   <div>
-    <NavBar />
     <div class="w-full p-2 flex justify-between items-center">
       <div class="w-auto">
         <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for user..." />
@@ -300,6 +300,7 @@ async function deleteUser(event: FormSubmitEvent<deleteUserSchema>) {
       })
       if (error.value) {
         toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+        return
       }
       toast.add({ title: 'User successfully deleted', description: selected.value[i].username + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
     }
@@ -315,6 +316,7 @@ async function deleteUser(event: FormSubmitEvent<deleteUserSchema>) {
     })
     if (error.value) {
       toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+      return
     }
     isDeleteOpen.value = false
     deleteSelectedUser.value = ''

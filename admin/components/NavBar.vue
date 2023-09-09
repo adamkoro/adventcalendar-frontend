@@ -1,29 +1,34 @@
 <template>
-    <nav class="mt-1 mx-2 bg-green-900 border-b-2 rounded-lg border-orange-600 text-white dark:text-black">
-        <div class="w-full flex items-center justify-between p-3">
-            <div class="flex items-center">
-                <img src="~/assets/pictures/geeko.svg" class="h-6 mr-2" />
-                <div class="text-xl font-semibold ">AdventCalendar Admin Center</div>
+    <header class="header sticky top-2 bg-white dark:bg-slate-800 shadow-md flex items-center justify-between px-4 mb-5 rounded">
+        <!-- logo -->
+        <h1 class="w-1/3">
+            <div class="flex items-center gap-1">
+                <img src="~/assets/pictures/geeko.svg" class="h-6" />
+                <div class="text-l font-semibold ">AdventCalendar Admin Center</div>
             </div>
-            <div class="flex items-center hover:text-orange-600">
-                <div class="flex items-center">Welcome, {{ username }}</div>
+        </h1>
+        <nav class="nav font-semibold">
+            <ul class="flex items-center">
+                <li class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                    <NuxtLink to="/admin/home">Home</NuxtLink>
+                </li>
+                <li class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                    <NuxtLink to="/admin/users">Users</NuxtLink>
+                </li>
+            </ul>
+        </nav>
+        <div class="w-1/3 flex justify-end gap-2">
+            <div class="flex font-semibold items-center">
+                <div class="">Welcome,</div>
+                <div class="ml-1 text-orange-600">{{ username }}</div>
             </div>
-            <div class="hidden w-full md:block md:w-auto ">
-                <ul class="font-medium flex gap-3 items-center">
-                    <div class="">
-                        <LightDarkButton />
-                    </div>
-                    <UButton>
-                        <NuxtLink to="/admin/home">Home</NuxtLink>
-                    </UButton>
-                    <UButton>
-                        <NuxtLink to="/admin/users">Users</NuxtLink>
-                    </UButton>
-                    <UButton @click="logout" label="Logout" />
-                </ul>
+            
+            <div class="">
+                <LightDarkButton />
             </div>
+            <UButton @click="logout" label="Logout" />
         </div>
-    </nav>
+    </header>
 </template>
 <script setup>
 const username = useCookie('username')
