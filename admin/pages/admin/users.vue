@@ -34,7 +34,7 @@
               @click="isCreateOpen = false" />
           </div>
         </template>
-        <UForm :validate="validateCreateUser" :state="state" @submit="createUser">
+        <UForm :schema="createUserSchema" :state="state" @submit="createUser">
           <UFormGroup size="xl" label="Username" name="username"
             :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
             <UInput v-model="state.username" placeholder="Enter username..." />
@@ -58,6 +58,47 @@
             <UButton type="submit" size="xl" label="Create" @click="createUser">
               <template #trailing>
                 <UIcon name="i-heroicons-plus-20-solid" />
+              </template>
+            </UButton>
+          </div>
+        </template>
+      </UCard>
+    </UModal>
+    <UModal v-model="isEditOpen">
+      <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <template #header>
+          <div class="flex items-center justify-between ">
+            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+              Edit user
+            </h3>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
+              @click="isEditOpen = false" />
+          </div>
+        </template>
+        <UForm :schema="editUserSchema" :state="state" @submit="updateUser">
+          <UFormGroup size="xl" label="Username" name="username"
+            :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
+            <UInput v-model="state.username" placeholder="Enter username..." />
+          </UFormGroup>
+          <UFormGroup size="xl" label="Email" name="email" :ui="{ label: { base: 'font-semibold text-black text-xl' } }"
+            error>
+            <UInput v-model="state.email" type="email" placeholder="Enter email..." />
+          </UFormGroup>
+          <UFormGroup size="xl" label="Password" name="password"
+            :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
+            <UInput v-model="state.password" type="password" placeholder="Enter password..." />
+          </UFormGroup>
+        </UForm>
+        <template #footer>
+          <div class="flex justify-between">
+            <UButton type="cancel" size="xl" label="Cancel" @click="isEditOpen = false">
+              <template #trailing>
+                <UIcon name="i-heroicons-no-symbol-20-solid" />
+              </template>
+            </UButton>
+            <UButton type="submit" size="xl" label="Save" @click="updateUser">
+              <template #trailing>
+                <UIcon name="i-heroicons-check-20-solid" />
               </template>
             </UButton>
           </div>
@@ -100,7 +141,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { string, object, email, minLength, Input } from 'valibot'
-import type { FormError, FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
+import type { FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
 
 const config = useRuntimeConfig();
 
@@ -121,19 +162,27 @@ const columns = [
 
 const createUserSchema = object({
   username: string([minLength(1, 'Required')]),
-  email: string([email('Required')]),
+  email: string([email('Invalid email')]),
   password: string([minLength(1, 'Required')])
 })
+
 type UserSchema = Input<typeof createUserSchema>
+
 const state = ref({
   username: undefined,
   email: undefined,
   password: undefined
 })
+
 const deleteUserSchema = object({
   username: string([minLength(1, 'Required')]),
 })
 type deleteUserSchema = Input<typeof deleteUserSchema>
+
+const editUserSchema = object({
+  email: string([email('Invalid email')]),
+})
+type editUserSchema = Input<typeof editUserSchema>
 
 
 const filterInput = ref('')
@@ -142,6 +191,7 @@ const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
 const selected = ref([users[1]])
 const deleteSelectedUser = ref('')
+const editSelectedUser = ref('')
 const toast = useToast()
 
 function select(row) {
@@ -152,21 +202,6 @@ function select(row) {
     selected.value.splice(index, 1)
   }
 }
-
-const validateCreateUser = (state: any): FormError[] => {
-  const errors = []
-  if (!state.username) errors.push({ path: 'username', message: 'Required' })
-  if (!state.email) errors.push({ path: 'email', message: 'Required' })
-  if (!state.password) errors.push({ path: 'password', message: 'Required' })
-  return errors
-}
-
-const validateDeleteUser = (state: any): FormError[] => {
-  const errors = []
-  if (!state.username) errors.push({ path: 'username', message: 'Required' })
-  return errors
-}
-
 
 async function createUser(event: FormSubmitEvent<UserSchema>) {
   const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
@@ -185,7 +220,7 @@ async function createUser(event: FormSubmitEvent<UserSchema>) {
   }
 }
 
-async function updateUser(event: FormSubmitEvent<UserSchema>) {
+async function updateUser(event: FormSubmitEvent<editUserSchema>) {
   const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
     method: 'PUT',
     body: JSON.stringify({ username: state.value.username, email: state.value.email, password: state.value.password }),
@@ -224,7 +259,7 @@ const items = (row) => [
   [{
     label: 'Edit',
     icon: 'i-heroicons-pencil-square-20-solid',
-    click: () => console.log('Edit', row.id)
+    click: () => (isEditOpen.value = true) && (editSelectedUser.value = row.username)
   }], [{
     label: 'Delete',
     icon: 'i-heroicons-trash-20-solid',
