@@ -14,8 +14,8 @@
         <UButton icon="i-heroicons-trash-20-solid" label="Delete" @click="isDeleteOpen = true" />
       </div>
     </div>
-    <UTable v-model="selected" @select="select" :rows="filteredRows" :columns="columns" :loading="pending"
-      :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No items.' }"
+    <UTable v-model="selected" @select="select" :rows="filteredRows" :columns="columns" :sort="{ column: 'title' }"
+      :loading="pending" :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No items.' }"
       :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
       <template #actions-data="{ row }">
         <UDropdown :items="items(row)">
@@ -31,7 +31,7 @@
               Create user
             </h3>
             <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
-              @click="isCreateOpen = false" />
+              @click="(isCreateOpen = false) && (state.username = undefined) && (state.email = undefined) && (state.password = undefined)" />
           </div>
         </template>
         <UForm :schema="createUserSchema" :state="state" @submit="createUser">
@@ -50,7 +50,8 @@
         </UForm>
         <template #footer>
           <div class="flex justify-between">
-            <UButton type="cancel" size="xl" label="Cancel" @click="isCreateOpen = false">
+            <UButton type="cancel" size="xl" label="Cancel"
+              @click="(isCreateOpen = false) && (state.username = undefined) && (state.email = undefined) && (state.password = undefined)">
               <template #trailing>
                 <UIcon name="i-heroicons-no-symbol-20-solid" />
               </template>
@@ -72,17 +73,18 @@
               Edit user
             </h3>
             <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
-              @click="isEditOpen = false" />
+              @click="(isEditOpen = false) && (editSelectedUser = '')" />
           </div>
         </template>
         <UForm :schema="editUserSchema" :state="state" @submit="updateUser">
           <UFormGroup size="xl" label="Username" name="username"
             :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
-            <UInput v-model="state.username" placeholder="Enter username..." />
+            {{ editSelectedUser.username }}
           </UFormGroup>
           <UFormGroup size="xl" label="Email" name="email" :ui="{ label: { base: 'font-semibold text-black text-xl' } }"
             error>
-            <UInput v-model="state.email" type="email" placeholder="Enter email..." />
+            <div> Current email: {{ editSelectedUser.email }}</div>
+            <UInput v-model="state.email" type="email" placeholder="Enter new email..." />
           </UFormGroup>
           <UFormGroup size="xl" label="Password" name="password"
             :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
@@ -91,7 +93,7 @@
         </UForm>
         <template #footer>
           <div class="flex justify-between">
-            <UButton type="cancel" size="xl" label="Cancel" @click="isEditOpen = false">
+            <UButton type="cancel" size="xl" label="Cancel" @click="(isEditOpen = false) && (editSelectedUser = '')">
               <template #trailing>
                 <UIcon name="i-heroicons-no-symbol-20-solid" />
               </template>
@@ -113,15 +115,20 @@
               Delete user
             </h3>
             <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
-              @click="isDeleteOpen = false" />
+              @click="(isDeleteOpen = false) && (deleteSelectedUser = '')" />
           </div>
         </template>
-        <div>
-          Are you sure you want to delete?
+        <div v-if="deleteSelectedUser">
+          Are you sure you want to delete {{ deleteSelectedUser }}?
+        </div>
+        <div v-else>
+          <div v-if="selected">
+            Are you sure you want to delete {{ selected.length - 1 }} users?
+          </div>
         </div>
         <template #footer>
           <div class="flex justify-between">
-            <UButton type="cancel" size="xl" label="Cancel" @click="isDeleteOpen = false">
+            <UButton type="cancel" size="xl" label="Cancel" @click="(isDeleteOpen = false) && (deleteSelectedUser = '')">
               <template #trailing>
                 <UIcon name="i-heroicons-no-symbol-20-solid" />
               </template>
@@ -150,29 +157,61 @@ const { data: users, error, pending, refresh: fetchUsers } = await useFetch(conf
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
 })
+const state = ref({
+  username: undefined,
+  email: undefined,
+  password: undefined
+})
+const filterInput = ref('')
+const isEditOpen = ref(false)
+const isCreateOpen = ref(false)
+const isDeleteOpen = ref(false)
+const selected = ref([users[0]])
+const deleteSelectedUser = ref('')
+const editSelectedUser = ref('')
+const toast = useToast()
 
 const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'username', label: 'Username' },
-  { key: 'email', label: 'Email' },
-  { key: 'created', label: 'Created' },
-  { key: 'modified', label: 'Updated' },
+  { key: 'id', label: 'ID', sortable: true },
+  { key: 'username', label: 'Username', sortable: true },
+  { key: 'email', label: 'Email', sortable: true },
+  { key: 'created', label: 'Created', sortable: true },
+  { key: 'modified', label: 'Updated', sortable: true },
   { key: 'actions' }
 ]
+
+
+const filteredRows = computed(() => {
+  if (!filterInput.value) {
+    return users.value
+  }
+  return users.value.filter((person) => {
+    return Object.values(person).some((value) => {
+      return String(value).toLowerCase().includes(filterInput.value.toLowerCase())
+    })
+  })
+})
+
+const items = (row) => [
+  [{
+    label: 'Edit',
+    icon: 'i-heroicons-pencil-square-20-solid',
+    click: () => (isEditOpen.value = true) && (editSelectedUser.value = row)
+  }], [{
+    label: 'Delete',
+    icon: 'i-heroicons-trash-20-solid',
+    click: () => (isDeleteOpen.value = true) && (deleteSelectedUser.value = row.username)
+  }]
+]
+
 
 const createUserSchema = object({
   username: string([minLength(1, 'Required')]),
   email: string([email('Invalid email')]),
   password: string([minLength(1, 'Required')])
 })
-
 type UserSchema = Input<typeof createUserSchema>
 
-const state = ref({
-  username: undefined,
-  email: undefined,
-  password: undefined
-})
 
 const deleteUserSchema = object({
   username: string([minLength(1, 'Required')]),
@@ -183,16 +222,6 @@ const editUserSchema = object({
   email: string([email('Invalid email')]),
 })
 type editUserSchema = Input<typeof editUserSchema>
-
-
-const filterInput = ref('')
-const isEditOpen = ref(false)
-const isCreateOpen = ref(false)
-const isDeleteOpen = ref(false)
-const selected = ref([users[1]])
-const deleteSelectedUser = ref('')
-const editSelectedUser = ref('')
-const toast = useToast()
 
 function select(row) {
   const index = selected.value.findIndex((item) => item.id === row.id)
@@ -211,61 +240,76 @@ async function createUser(event: FormSubmitEvent<UserSchema>) {
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'User create error', description: error.value.data.error+'', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'User create error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
   }
   if (data.value) {
     isCreateOpen.value = false
+    state.value = {
+      username: undefined,
+      email: undefined,
+      password: undefined
+    }
     fetchUsers()
-    toast.add({ title: 'User successfully created', description: state.value.username+' created', icon: 'i-heroicons-check-circle-20-solid' })
+    toast.add({ title: 'User successfully created', description: state.value.username + ' created', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
 
 async function updateUser(event: FormSubmitEvent<editUserSchema>) {
   const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
     method: 'PUT',
-    body: JSON.stringify({ username: state.value.username, email: state.value.email, password: state.value.password }),
-    headers: useRequestHeaders(['authorization', 'cookie',]),
-    credentials: 'include',
-  })
-}
-
-async function deleteUser(event: FormSubmitEvent<deleteUserSchema>) {
-  const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
-    method: 'DELETE',
-    body: JSON.stringify({ username: deleteSelectedUser.value }),
+    body: JSON.stringify({ username: editSelectedUser.value.username, email: state.value.email, password: state.value.password }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'User delete error', description: error.value.data.error+'', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'User update error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
   }
-  isDeleteOpen.value = false
-  fetchUsers()
-  toast.add({ title: 'User successfully deleted', description: deleteSelectedUser.value + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+  if (data.value) {
+    isEditOpen.value = false
+    state.value = {
+      username: undefined,
+      email: undefined,
+      password: undefined
+    }
+    editSelectedUser.value = ''
+    fetchUsers()
+    toast.add({ title: 'User successfully updated', description: editSelectedUser.value.username + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+  }
 }
 
-const filteredRows = computed(() => {
-  if (!filterInput.value) {
-    return users.value
+async function deleteUser(event: FormSubmitEvent<deleteUserSchema>) {
+  if (selected.value.length > 1) {
+    for (let i = 1; i < selected.value.length; i++) {
+      const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
+        method: 'DELETE',
+        body: JSON.stringify({ username: selected.value[i].username }),
+        headers: useRequestHeaders(['authorization', 'cookie',]),
+        credentials: 'include',
+      })
+      if (error.value) {
+        toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+      }
+      toast.add({ title: 'User successfully deleted', description: selected.value[i].username + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+    }
+    isDeleteOpen.value = false
+    fetchUsers()
   }
-  return users.value.filter((person) => {
-    return Object.values(person).some((value) => {
-      return String(value).toLowerCase().includes(filterInput.value.toLowerCase())
+  else {
+    const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
+      method: 'DELETE',
+      body: JSON.stringify({ username: deleteSelectedUser.value }),
+      headers: useRequestHeaders(['authorization', 'cookie',]),
+      credentials: 'include',
     })
-  })
-})
-
-const items = (row) => [
-  [{
-    label: 'Edit',
-    icon: 'i-heroicons-pencil-square-20-solid',
-    click: () => (isEditOpen.value = true) && (editSelectedUser.value = row.username)
-  }], [{
-    label: 'Delete',
-    icon: 'i-heroicons-trash-20-solid',
-    click: () => (isDeleteOpen.value = true) && (deleteSelectedUser.value = row.username)
-  }]
-]
+    if (error.value) {
+      toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+    }
+    isDeleteOpen.value = false
+    deleteSelectedUser.value = ''
+    fetchUsers()
+    toast.add({ title: 'User successfully deleted', description: deleteSelectedUser.value + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+  }
+}
 
 useHead({
   title: `User Management`,
