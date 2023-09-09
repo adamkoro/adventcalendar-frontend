@@ -1,11 +1,10 @@
 <template>
     <div class="fixed inset-x-0 bottom-0">
         <div class="font-poppins-semibold cursor-default">
-            <div class="text-center text-xs text-suse-info-text bg-suse-dark-green">
+            <div class="text-center text-xs">
             <span>
                 © {{ actualYear }} Copyright:
-                <a href="mailto:dfaltum@npsh.hu">Faltum Dániel</a> &
-                <a href="mailto:akoronics@npsh.hu">Koronics Ádám</a>
+                <NuxtLink to="https://github.com/adamkoro/adventcalendar-frontend" target="_blank">Github</NuxtLink>
             </span>
             </div>
         </div>
