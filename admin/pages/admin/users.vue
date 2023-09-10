@@ -14,9 +14,6 @@
         <UTooltip text="Create new user">
           <UButton icon="i-heroicons-plus-20-solid" label="Create" @click="isCreateOpen = true" />
         </UTooltip>
-        <UTooltip text="Edit selected user (only 1)">
-          <UButton icon="i-heroicons-pencil-square-20-solid" label="Edit" @click="isEditOpen = true" />
-        </UTooltip>
         <UTooltip text="Delete selected user(s)">
           <UButton icon="i-heroicons-trash-20-solid" label="Delete" @click="isDeleteOpen = true" />
         </UTooltip>
@@ -132,7 +129,7 @@
           <div class="">?</div>
         </div>
         <div v-else>
-          <div v-if="selected" class="flex flex-row gap-1">
+          <div v-if="selected && selected.length > 1" class="flex flex-row gap-1">
             <div class="">Are you sure you want to delete</div>
             <div class="text-red-600">{{ selected.length - 1 }} user(s)</div>
             <div class="">?</div>
@@ -178,9 +175,9 @@ const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
-let selected = ref([users[0]])
-let deleteSelectedUser = ref('')
-let editSelectedUser = ref('')
+const selected = ref([users[0]])
+const deleteSelectedUser = ref('')
+const editSelectedUser = ref('')
 const toast = useToast()
 
 const columns = [
@@ -242,6 +239,10 @@ function select(row) {
   } else {
     selected.value.splice(index, 1)
   }
+}
+
+function showError(error) {
+  toast.add({ title: 'Error', description: error, icon: 'i-heroicons-no-symbol-20-solid' })
 }
 
 async function createUser(event: FormSubmitEvent<UserSchema>) {
