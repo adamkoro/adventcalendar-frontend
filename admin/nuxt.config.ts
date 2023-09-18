@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: 'http://localhost:8080',
+      mailUrl: 'http://localhost:8082',
     },
   },
 })
