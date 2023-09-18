@@ -1,16 +1,16 @@
 <template>
   <NavBar />
   <div>
-    <div class="w-full p-2 flex justify-between items-center">
-      <div class="w-auto">
-        <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for user..." />
+    <div class="flex items-center justify-between p-2">
+      <div class="w-1/3">
+        <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for user..."/>
       </div>
-      <div class="w-auto">
+      <div class="">
         <UTooltip text="Update user list">
           <UButton icon="i-heroicons-arrow-path-20-solid" label="Refresh" @click="fetchUsers" />
         </UTooltip>
       </div>
-      <div class="w-auto justify-end space-x-2">
+      <div class="w-1/3 flex justify-end gap-2">
         <UTooltip text="Create new user">
           <UButton icon="i-heroicons-plus-20-solid" label="Create" @click="isCreateOpen = true" />
         </UTooltip>
@@ -36,7 +36,7 @@
               Create user
             </h3>
             <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
-              @click="(isCreateOpen = false) && (state.username = undefined) && (state.email = undefined) && (state.password = undefined)" />
+              @click="(isCreateOpen = false) && resetState()" />
           </div>
         </template>
         <UForm :schema="createUserSchema" :state="state" @submit="createUser">
@@ -160,17 +160,25 @@ import { string, object, email, minLength, Input } from 'valibot'
 import type { FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
 
 const config = useRuntimeConfig();
-
 const { data: users, error, pending, refresh: fetchUsers } = await useFetch(config.public.apiUrl + '/api/admin/users', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
 })
-const state = ref({
-  username: undefined,
-  email: undefined,
-  password: undefined
-})
+
+function initialState(){
+  return {
+    username: undefined,
+    email: undefined,
+    password: undefined
+  }
+}
+
+const state = ref({ ...initialState })
+function resetState(){
+    Object.assign(state.value, { ...initialState });
+}
+
 const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
@@ -332,6 +340,29 @@ useHead({
 })
 
 definePageMeta({
+  middleware: [
+        function (to, from) {
+          const token = useCookie('token')
+            if (!token.value) {
+                navigateTo('/admin/login',{ redirect: true })
+            }
+        }
+    ],
+  async validate({ params }) {
+    const config = useRuntimeConfig();
+    const { data, error } = await useFetch(config.public.apiUrl + '/api/admin/users', {
+      method: 'GET',
+      headers: useRequestHeaders(['authorization', 'cookie']),
+      credentials: 'include',
+    })
+    if (error.value) {
+      return createError({
+        statusCode: error.value.status,
+        message: error.value.data.error,
+      })
+    }
+    return true
+  },
 })
 </script>
   
