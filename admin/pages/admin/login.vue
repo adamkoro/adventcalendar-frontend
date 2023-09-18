@@ -85,8 +85,14 @@ useHead({
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
 definePageMeta({
-    //middleware: ["auth"]
-    // or middleware: 'auth'
+    //middleware: 'check-auth',
+    middleware: [
+        function (to, from) {
+            if (getCookie("token") != "") {
+                navigateTo('/admin/home',{ redirect: true })
+            }
+        }
+    ]
 })
 /*definePageMeta({
     async validate({ params }) {
