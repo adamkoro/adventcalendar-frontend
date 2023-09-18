@@ -15,6 +15,9 @@
                 <li class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
                     <NuxtLink to="/admin/users">Users</NuxtLink>
                 </li>
+                <li class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                    <NuxtLink to="/admin/emails">Emails</NuxtLink>
+                </li>
             </ul>
         </nav>
         <div class="w-1/3 flex justify-end gap-2">
