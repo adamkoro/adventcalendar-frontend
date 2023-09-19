@@ -2,20 +2,20 @@
     <header class="header sticky top-2 bg-white dark:bg-slate-800 shadow-md flex items-center justify-between px-4 mb-5 rounded">
         <!-- logo -->
         <h1 class="w-1/3">
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 cursor-pointer">
                 <img src="~/assets/pictures/geeko.svg" class="h-6" />
-                <div class="text-l font-semibold ">AdventCalendar Admin Center</div>
+                <NuxtLink to="/admin/home" class="text-l font-semibold ">AdventCalendar Admin Center</NuxtLink>
             </div>
         </h1>
         <nav class="nav font-semibold">
             <ul class="flex items-center">
-                <li class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
                     <NuxtLink to="/admin/home">Home</NuxtLink>
                 </li>
-                <li class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
                     <NuxtLink to="/admin/users">Users</NuxtLink>
                 </li>
-                <li class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
                     <NuxtLink to="/admin/emails">Emails</NuxtLink>
                 </li>
             </ul>
