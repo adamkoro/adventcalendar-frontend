@@ -10,13 +10,24 @@
         <nav class="nav font-semibold">
             <ul class="flex items-center">
                 <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/home">Home</NuxtLink>
+                    <UTooltip text="Admin home page">
+                        <NuxtLink to="/admin/home">Home</NuxtLink>
+                    </UTooltip>
                 </li>
                 <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/users">Users</NuxtLink>
+                    <UTooltip text="Manage calendar days">
+                        <NuxtLink to="/admin/days">Days</NuxtLink>
+                    </UTooltip>
                 </li>
                 <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/emails">Emails</NuxtLink>
+                    <UTooltip text="Manage admin users">
+                        <NuxtLink to="/admin/users">Users</NuxtLink>
+                    </UTooltip>
+                </li>
+                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                    <UTooltip text="Manage email patterns">
+                        <NuxtLink to="/admin/emails">Emails</NuxtLink>
+                    </UTooltip>
                 </li>
             </ul>
         </nav>
