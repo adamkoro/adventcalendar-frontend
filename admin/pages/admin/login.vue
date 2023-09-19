@@ -17,11 +17,11 @@
                     <UInput v-model="state.password" type="password" placeholder="Enter your password..."/>
                 </UFormGroup>
                 </div>
-                <Ucard v-model="isLoginError">
+                <UContainer v-model="isLoginError">
                     <div class="text-center text-red-500">
                     {{ loginError }}
                     </div>
-                </Ucard>
+                </UContainer>
                 <div class="flex justify-center p-4">
                     <UButton type="submit" size="xl" label="Login" >
                         <template #trailing>
@@ -47,6 +47,8 @@ const schema = object({
     username: string([minLength(1, 'Required')]),
     password: string([minLength(1, 'Required')])
 })
+
+
 type Schema = Input<typeof schema>
 const state = ref({
     username: undefined,
@@ -59,7 +61,7 @@ const validate = (state: any): FormError[] => {
     return errors
 }
 async function login(event: FormSubmitEvent<Schema>) {
-        const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl+'/api/login', {
+        const { data, error } = await useFetch(useRuntimeConfig().public.authUrl+'/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({username: state.value.username, password: state.value.password}),
         headers: useRequestHeaders(['authorization','cookie',]),

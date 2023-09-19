@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     public: {
       apiUrl: 'http://localhost:8080',
       mailUrl: 'http://localhost:8082',
+      authUrl: 'http://localhost:8086',
     },
   },
 })

@@ -36,7 +36,7 @@
 <script setup>
 const username = useCookie('username')
 const logout = async () => {
-    const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/logout', {
+    const { data, error } = await useFetch(useRuntimeConfig().public.authUrl+'/api/auth/logout', {
         method: 'POST',
         headers: useRequestHeaders(['authorization', 'cookie',]),
         credentials: 'include',
