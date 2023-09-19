@@ -160,7 +160,7 @@ import { string, object, email, minLength, Input } from 'valibot'
 import type { FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
 
 const config = useRuntimeConfig();
-const { data: users, error, pending, refresh: fetchUsers } = await useFetch(config.public.apiUrl + '/api/admin/users', {
+const { data: users, error, pending, refresh: fetchUsers } = await useFetch(config.public.apiUrl + '/api/admin/usermanage/users', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
@@ -254,7 +254,7 @@ function showError(error) {
 }
 
 async function createUser(event: FormSubmitEvent<UserSchema>) {
-  const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
+  const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/user', {
     method: 'POST',
     body: JSON.stringify({ username: state.value.username, email: state.value.email, password: state.value.password }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
@@ -276,7 +276,7 @@ async function createUser(event: FormSubmitEvent<UserSchema>) {
 }
 
 async function updateUser(event: FormSubmitEvent<editUserSchema>) {
-  const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
+  const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/user', {
     method: 'PUT',
     body: JSON.stringify({ username: editSelectedUser.value.username, email: state.value.email, password: state.value.password }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
@@ -301,7 +301,7 @@ async function updateUser(event: FormSubmitEvent<editUserSchema>) {
 async function deleteUser(event: FormSubmitEvent<deleteUserSchema>) {
   if (selected.value.length > 1) {
     for (let i = 1; i < selected.value.length; i++) {
-      const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
+      const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/user', {
         method: 'DELETE',
         body: JSON.stringify({ username: selected.value[i].username }),
         headers: useRequestHeaders(['authorization', 'cookie',]),
@@ -317,7 +317,7 @@ async function deleteUser(event: FormSubmitEvent<deleteUserSchema>) {
     fetchUsers()
   }
   else {
-    const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/user', {
+    const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/user', {
       method: 'DELETE',
       body: JSON.stringify({ username: deleteSelectedUser.value }),
       headers: useRequestHeaders(['authorization', 'cookie',]),
@@ -350,7 +350,7 @@ definePageMeta({
     ],
   async validate({ params }) {
     const config = useRuntimeConfig();
-    const { data, error } = await useFetch(config.public.apiUrl + '/api/admin/users', {
+    const { data, error } = await useFetch(config.public.apiUrl + '/api/admin/usermanage/users', {
       method: 'GET',
       headers: useRequestHeaders(['authorization', 'cookie']),
       credentials: 'include',

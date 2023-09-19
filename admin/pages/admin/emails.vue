@@ -98,8 +98,8 @@
               <!--p>Current</p>
               <UInput :readonly="true" v-model="editSelectedEmail.body" />
               <p>New</p-->
-            <UInput v-model="state.body" placeholder="Enter a subject..." />
-          </UFormGroup>
+              <UTextarea v-model="state.body" placeholder="Enter a subject..." autoresize />
+            </UFormGroup>
           </UForm>
         <template #footer>
           <div class="flex justify-between">
@@ -158,7 +158,7 @@ import { string, object, email, minLength, Input } from 'valibot'
 import type { FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
 
 const config = useRuntimeConfig();
-const { data: emails, error, pending, refresh: fetchEmails } = await useFetch(config.public.mailUrl + '/api/admin/email', {
+const { data: emails, error, pending, refresh: fetchEmails } = await useFetch(config.public.mailUrl + '/api/admin/emailmanage/email', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
@@ -209,7 +209,7 @@ function showError(error) {
 
 
 async function createEmail(event: FormSubmitEvent<EmailSchema>) {
-  const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/email', {
+  const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
     method: 'POST',
     body: JSON.stringify({ name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
@@ -226,7 +226,7 @@ async function createEmail(event: FormSubmitEvent<EmailSchema>) {
 }
 
 async function deleteEmail(event: FormSubmitEvent<deleteEmailSchema>) {
-  const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/email', {
+  const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
     method: 'DELETE',
     body: JSON.stringify({ name: deleteSelectedEmail.value }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
@@ -258,7 +258,7 @@ definePageMeta({
   ],
   async validate({ params }) {
     const config = useRuntimeConfig();
-    const { data, error } = await useFetch(config.public.mailUrl + '/api/admin/email', {
+    const { data, error } = await useFetch(config.public.mailUrl + '/api/admin/emailmanage/email', {
       method: 'GET',
       headers: useRequestHeaders(['authorization', 'cookie']),
       credentials: 'include',
