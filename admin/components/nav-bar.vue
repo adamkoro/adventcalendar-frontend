@@ -10,24 +10,16 @@
         <nav class="nav font-semibold">
             <ul class="flex items-center">
                 <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <UTooltip text="Admin home page">
-                        <NuxtLink to="/admin/home">Home</NuxtLink>
-                    </UTooltip>
+                    <NuxtLink to="/admin/home">Home</NuxtLink>
                 </li>
                 <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <UTooltip text="Manage calendar days">
-                        <NuxtLink to="/admin/days">Days</NuxtLink>
-                    </UTooltip>
+                    <NuxtLink to="/admin/days">Days</NuxtLink>
                 </li>
                 <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <UTooltip text="Manage admin users">
-                        <NuxtLink to="/admin/users">Users</NuxtLink>
-                    </UTooltip>
+                    <NuxtLink to="/admin/users">Users</NuxtLink>
                 </li>
                 <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <UTooltip text="Manage email patterns">
                         <NuxtLink to="/admin/emails">Emails</NuxtLink>
-                    </UTooltip>
                 </li>
             </ul>
         </nav>
@@ -38,7 +30,7 @@
             </div>
             
             <div class="">
-                <LightDarkButton />
+                <ThemeSwitchButton />
             </div>
             <UButton @click="logout" label="Logout" />
         </div>
