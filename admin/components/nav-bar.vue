@@ -1,5 +1,6 @@
 <template>
-    <header class="header sticky top-2 bg-white dark:bg-slate-800 shadow-md flex items-center justify-between px-4 mb-5 rounded">
+    <header
+        class="header sticky top-2 bg-white dark:bg-slate-800 shadow-md flex items-center justify-between px-4 mb-5 rounded">
         <!-- logo -->
         <h1 class="w-1/3">
             <div class="flex items-center gap-1 cursor-pointer">
@@ -9,18 +10,49 @@
         </h1>
         <nav class="nav font-semibold">
             <ul class="flex items-center">
-                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/home">Home</NuxtLink>
-                </li>
-                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                <div v-if="activeNavLink == 'home'">
+                    <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
+                        <NuxtLink to="/admin/home">Home</NuxtLink>
+                    </li>
+                </div>
+                <div v-else >
+                    <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                        <NuxtLink to="/admin/home">Home</NuxtLink>
+                    </li>
+                </div>
+                <div v-if="activeNavLink == 'days'">
+                    <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
+                        <NuxtLink to="/admin/days">Days</NuxtLink>
+                    </li>
+                </div>
+                <div v-else >
+                <li
+                    class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
                     <NuxtLink to="/admin/days">Days</NuxtLink>
                 </li>
-                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                </div>
+                <div v-if="activeNavLink == 'users'">
+                    <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
+                        <NuxtLink to="/admin/users">Users</NuxtLink>
+                    </li>
+                </div>
+                <div v-else >
+                <li
+                    class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
                     <NuxtLink to="/admin/users">Users</NuxtLink>
                 </li>
-                <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                </div>
+                <div v-if="activeNavLink == 'emails'">
+                    <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
                         <NuxtLink to="/admin/emails">Emails</NuxtLink>
+                    </li>
+                </div>
+                <div v-else >
+                <li
+                    class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                    <NuxtLink to="/admin/emails">Emails</NuxtLink>
                 </li>
+                </div>
             </ul>
         </nav>
         <div class="w-1/3 flex justify-end gap-2">
@@ -28,7 +60,7 @@
                 <div class="">Welcome,</div>
                 <div class="ml-1 text-orange-600">{{ username }}</div>
             </div>
-            
+
             <div class="">
                 <ThemeSwitchButton />
             </div>
@@ -37,9 +69,11 @@
     </header>
 </template>
 <script setup>
+import nuxtStorage from 'nuxt-storage';
+const activeNavLink = nuxtStorage.localStorage.getData('activeNavLink')
 const username = useCookie('username')
 const logout = async () => {
-    const { data, error } = await useFetch(useRuntimeConfig().public.authUrl+'/api/auth/logout', {
+    const { data, error } = await useFetch(useRuntimeConfig().public.authUrl + '/api/auth/logout', {
         method: 'POST',
         headers: useRequestHeaders(['authorization', 'cookie',]),
         credentials: 'include',
@@ -48,7 +82,7 @@ const logout = async () => {
         alert(error.value.data.error)
         return
     }
-    if (data.value.status == 'Logout successful') {
+    if (data.value.status == 'logout successful') {
         deleteCookie("username")
         navigateTo('/admin/login', { redirect: true })
     }
