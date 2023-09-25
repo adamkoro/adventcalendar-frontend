@@ -6,19 +6,14 @@
 </template>
 
 <script setup>
+import checkAuth from "~/middleware/checkAuth"
+import nuxtStorage from 'nuxt-storage';
+nuxtStorage.localStorage.setData('activeNavLink', 'home')
 useHead({
     title: `Admin Home`,
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
 definePageMeta({
-    middleware: [
-        function (to, from) {
-            const token = useCookie('token')
-            console.log(token.value)
-            if (!token.value) {
-                navigateTo('/admin/login',{ redirect: true })
-            }
-        }
-    ],
+    middleware: checkAuth
 })
 </script>
