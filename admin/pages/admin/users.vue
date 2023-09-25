@@ -262,7 +262,7 @@ async function createUser() {
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'User create error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'User create error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
   }
   if (data.value) {
     isCreateOpen.value = false
@@ -284,7 +284,7 @@ async function updateUser() {
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'User update error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'User update error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
   }
   if (data.value) {
     isEditOpen.value = false
@@ -309,7 +309,7 @@ async function deleteUser() {
         credentials: 'include',
       })
       if (error.value) {
-        toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+        toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
         return
       }
       toast.add({ title: 'User successfully deleted', description: selected.value[i].username + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })

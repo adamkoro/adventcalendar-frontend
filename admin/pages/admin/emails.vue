@@ -54,6 +54,9 @@
           </div>
         </div>
       </div>
+      <!-------------------------->
+      <!-- Create email pattern -->
+      <!-------------------------->
       <UModal v-model="isCreateOpen">
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
@@ -68,37 +71,22 @@
           <UForm :schema="createEmailSchema" :state="state" @submit="createEmail">
             <UFormGroup size="lg" label="Name of the pattern" name="name"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.name" />
-              <p>New</p-->
               <UInput v-model="state.name" placeholder="Enter a pattern name..." />
             </UFormGroup>
             <UFormGroup size="lg" label="From email address" name="from"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.from" />
-              <p>New</p-->
               <UInput v-model="state.from" placeholder="Enter a from email address..." />
             </UFormGroup>
             <UFormGroup size="lg" label="To email address" name="to"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.to" />
-              <p>New</p-->
               <UInput v-model="state.to" placeholder="Enter to email address(s)..." />
             </UFormGroup>
             <UFormGroup size="lg" label="Subject of the email" name="subject"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.subject" />
-              <p>New</p-->
               <UInput v-model="state.subject" placeholder="Enter a subject..." />
             </UFormGroup>
             <UFormGroup size="lg" label="Body of the email" name="body"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.body" />
-              <p>New</p-->
               <UTextarea v-model="state.body" placeholder="Enter a text..." autoresize />
             </UFormGroup>
           </UForm>
@@ -118,6 +106,76 @@
           </template>
         </UCard>
       </UModal>
+      <!-------------------------->
+      <!-- Edit email pattern -->
+      <!-------------------------->
+      <UModal v-model="isEditOpen">
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+          <template #header>
+            <div class="flex items-center justify-between ">
+              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                Edit email pattern
+              </h3>
+              <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
+                @click="(isEditOpen = false)" />
+            </div>
+          </template>
+          <UForm :schema="createEmailSchema" :state="state" @submit="updateEmail">
+            <UFormGroup size="lg" label="Name of the pattern" name="name"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedEmail.name" />
+              <p>New</p>
+              <UInput v-model="state.name" placeholder="Enter a pattern name..." />
+            </UFormGroup>
+            <UFormGroup size="lg" label="From email address" name="from"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedEmail.from" />
+              <p>New</p>
+              <UInput v-model="state.from" placeholder="Enter a from email address..." />
+            </UFormGroup>
+            <UFormGroup size="lg" label="To email address" name="to"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedEmail.to" />
+              <p>New</p>
+              <UInput v-model="state.to" placeholder="Enter to email address(s)..." />
+            </UFormGroup>
+            <UFormGroup size="lg" label="Subject of the email" name="subject"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedEmail.subject" />
+              <p>New</p>
+              <UInput v-model="state.subject" placeholder="Enter a subject..." />
+            </UFormGroup>
+            <UFormGroup size="lg" label="Body of the email" name="body"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedEmail.body" />
+              <p>New</p>
+              <UTextarea v-model="state.body" placeholder="Enter a text..." autoresize />
+            </UFormGroup>
+          </UForm>
+          <template #footer>
+            <div class="flex justify-between">
+              <UButton type="cancel" size="xl" label="Cancel" @click="(isEditOpen = false)">
+                <template #trailing>
+                  <UIcon name="i-heroicons-no-symbol-20-solid" />
+                </template>
+              </UButton>
+              <UButton type="submit" size="xl" label="Save" @click="updateEmail">
+                <template #trailing>
+                  <UIcon name="i-heroicons-check-20-solid" />
+                </template>
+              </UButton>
+            </div>
+          </template>
+        </UCard>
+      </UModal>
+      <!-------------------------->
+      <!-- Delete email pattern -->
+      <!-------------------------->
       <UModal v-model="isDeleteOpen">
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
@@ -158,7 +216,6 @@
 <script setup>
 import { ref } from 'vue'
 import { string, object, email, minLength, } from 'valibot'
-//import type { FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
 import checkAuth from '~/middleware/checkAuth';
 import nuxtStorage from 'nuxt-storage';
 
@@ -198,8 +255,8 @@ const deleteEmailSchema = object({
 
 const createEmailSchema = object({
   name: string([minLength(1, 'Name is required')]),
-  from: string([email(1,'Invalid email')]),
-  to: string([email(40,'To email address(es) is(are) required')]),
+  from: string([email(1, 'Invalid email')]),
+  to: string([email(40, 'To email address(es) is(are) required')]),
   subject: string([minLength(1, 'Subject is required')]),
   body: string([minLength(1, 'Body is required')])
 })
@@ -216,7 +273,7 @@ async function createEmail() {
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'Email create error', description: error.value.data.error+ '', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'Email create error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
   }
   if (data.value) {
     isCreateOpen.value = false
@@ -224,6 +281,23 @@ async function createEmail() {
     toast.add({ title: 'Email successfully updated', description: state.value.name + ' created', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
+
+/*async function updateEmail() {
+  const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
+    method: 'PUT',
+    body: JSON.stringify({ name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
+    headers: useRequestHeaders(['authorization', 'cookie',]),
+    credentials: 'include',
+  })
+  if (error.value) {
+    toast.add({ title: 'Email create error', description: error.value.data.error+ '', icon: 'i-heroicons-no-symbol-20-solid' })
+  }
+  if (data.value) {
+    isCreateOpen.value = false
+    fetchEmails()
+    toast.add({ title: 'Email successfully updated', description: state.value.name + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+  }
+}*/
 
 async function deleteEmail() {
   const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
@@ -233,7 +307,7 @@ async function deleteEmail() {
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'Email delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'Email delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
     isDeleteOpen.value = false
     return
   }
