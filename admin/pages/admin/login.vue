@@ -2,7 +2,7 @@
     <div class="text-black cursor-pointer">
         <div class="flex flex-col items-center justify-center py-5">
             <div>
-                <Header/>
+                <LoginHeader/>
             </div>
             <UForm :validate="validate" :state="state" @submit="login">
                 <div class="p-2">
@@ -30,7 +30,7 @@
                     </UButton>
                 </div>
             </UForm>
-            <LightDarkButton/>
+            <ThemeSwitchButton/>
         </div>
     </div>
 </template>
@@ -39,6 +39,7 @@
 import { ref } from 'vue'
 import { string, object, minLength, Input } from 'valibot'
 import type { FormError, FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
+import checkAuth from '~/middleware/checkAuth'
 
 const isLoginError = ref(false)
 const loginError = ref('')
@@ -72,9 +73,10 @@ async function login(event: FormSubmitEvent<Schema>) {
             loginError.value = error.value.data.error
             return
         }
-        if (data.value.status == 'Login successful') {
+        const responseData = data.value as { status: string }
+        if (responseData.status == 'login successful') {
             setCookie("username", state.value.username)
-            navigateTo('/admin/home',{ redirect: true })
+            navigateTo('/admin/home')
             toast.add({ title: 'Login successful', description: 'You have been logged in successfully as '+state.value.username, icon: 'i-heroicons-check-circle-20-solid' })
 
         }
@@ -82,41 +84,12 @@ async function login(event: FormSubmitEvent<Schema>) {
             isLoginError.value = true
         }
     }
+
 useHead({
     title: `Admin Login`,
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
 definePageMeta({
-    //middleware: 'check-auth',
-    middleware: [
-        function (to, from) {
-            if (getCookie("token") != "") {
-                navigateTo('/admin/home',{ redirect: true })
-            }
-        }
-    ]
 })
-/*definePageMeta({
-    async validate({ params }) {
-        const { data, error } = await useAsyncData('data', () => $fetch(`/api/${year}/day/${day}`))
-        if (error.value === null){
-            return true
-        }
-        if (error.value.message.split(" ")[0] === "403") {
-            return createError({
-                statusCode: 403,
-                message: "Hozzáférés megtagadva"
-            })
-        }
-        if (data.value === null) {
-            return createError({
-                statusCode: 404,
-                message: `Nap nem található`
-            })
-        }
-    return true
-    }
-})*/
-
 
 </script>
