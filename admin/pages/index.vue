@@ -1,13 +1,10 @@
+<template>
+
+</template>
+
 <script setup>
+import checkAuth from "~/middleware/checkAuth"
 definePageMeta({
-    middleware: [
-        function (to, from) {
-            const token = useCookie('token')
-            if (token.value) {
-                navigateTo('/admin/home',{ redirect: true })
-            }
-            navigateTo('/admin/login',{ redirect: true })
-        }
-    ],
+    middleware: checkAuth
 })
 </script>
