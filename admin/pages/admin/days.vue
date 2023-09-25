@@ -1,5 +1,6 @@
 <template>
   <NavBar />
+  <UContainer>
   <div>
     <div class="flex items-center justify-between p-2">
       <div class="w-1/3">
@@ -150,20 +151,22 @@
       </UCard>
     </UModal>
   </div>
+</UContainer>
 </template>
   
-<script setup lang="ts">
+<script setup >
 import { ref } from 'vue'
-import { string, object, email, minLength, Input } from 'valibot'
-import type { FormSubmitEvent } from '@nuxt/ui/dist/runtime/types'
+import { string, object, email, minLength } from 'valibot'
+import checkAuth from '~/middleware/checkAuth';
+import nuxtStorage from 'nuxt-storage';
 
+nuxtStorage.localStorage.setData('activeNavLink', 'days')
 const config = useRuntimeConfig();
 const { data: days, error, pending, refresh: fetchEmails } = await useFetch(config.public.publicUrl + '/api/public/days', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
 })
-
 
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
@@ -192,7 +195,6 @@ function resetState(){
 const deleteEmailSchema = object({
   name: string([minLength(1, 'Name is required')]),
 })
-type deleteEmailSchema = Input<typeof deleteEmailSchema>
 
 const createEmailSchema = object({
   name: string([minLength(1, 'Name is required')]),
@@ -201,14 +203,13 @@ const createEmailSchema = object({
   subject: string([minLength(1, 'Subject is required')]),
   body: string([minLength(1, 'Body is required')])
 })
-type EmailSchema = Input<typeof createEmailSchema>
 
 function showError(error) {
   toast.add({ title: 'Error', description: error, icon: 'i-heroicons-no-symbol-20-solid' })
 }
 
 
-async function createEmail(event: FormSubmitEvent<EmailSchema>) {
+async function createEmail() {
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
     method: 'POST',
     body: JSON.stringify({ name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
@@ -225,7 +226,7 @@ async function createEmail(event: FormSubmitEvent<EmailSchema>) {
   }
 }
 
-async function deleteDay(event: FormSubmitEvent<deleteEmailSchema>) {
+async function deleteDay() {
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
     method: 'DELETE',
     body: JSON.stringify({ id: deleteSelectedDay.value }),
@@ -248,29 +249,7 @@ useHead({
 })
 
 definePageMeta({
-  middleware: [
-    function (to, from) {
-      const token = useCookie('token')
-      if (!token.value) {
-        navigateTo('/admin/login', { redirect: true })
-      }
-    }
-  ],
-  async validate({ params }) {
-    const config = useRuntimeConfig();
-    const { data, error } = await useFetch(config.public.publicUrl + '/api/public/days', {
-      method: 'GET',
-      headers: useRequestHeaders(['authorization', 'cookie']),
-      credentials: 'include',
-    })
-    if (error.value) {
-      return createError({
-        statusCode: error.value.status,
-        message: error.value.data.error,
-      })
-    }
-    return true
-  },
+  middleware: checkAuth
 })
 </script>
   
