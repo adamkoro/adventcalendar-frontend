@@ -4,6 +4,9 @@
     <div>
       <div class="flex items-center justify-between p-2">
         <div class="w-1/3">
+          <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for email..." />
+        </div>
+        <div class="w-1/3">
           <UTooltip text="Create email pattern">
             <UButton icon="i-heroicons-plus-20-solid" label="Create" @click="isCreateOpen = true" />
           </UTooltip>
@@ -17,9 +20,10 @@
         </div>
       </div>
       <div class="grid grid-cols-3 gap-6 py-5 cursor-default">
-        <div v-for="email in emails" :key="email.Key" class="">
+        <div v-for="email in filteredRows" :key="email.Key" class="">
           <div
-            class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
+            class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg"
+          >
             <UFormGroup label="Name">
               <UInput :readonly="true" v-model="email.name" />
             </UFormGroup>
@@ -36,18 +40,20 @@
               <UInput :readonly="true" v-model="email.body" />
             </UFormGroup>
             <div class="flex items-center justify-between pb-1">
-              <div class="w-1/3">
-              </div>
-              <div class="flex">
-              </div>
+              <div class="w-1/3"></div>
+              <div class="flex"></div>
               <div class="w-1/3 flex justify-end gap-1 pt-2">
                 <UTooltip text="Edit email pattern">
-                  <UButton icon="i-heroicons-pencil-square-20-solid"
-                    @click="(isEditOpen = true) && (editSelectedEmail = email)" />
+                  <UButton
+                    icon="i-heroicons-pencil-square-20-solid"
+                    @click="(isEditOpen = true) && (editSelectedEmail = email)"
+                  />
                 </UTooltip>
                 <UTooltip text="Delete email pattern">
-                  <UButton icon="i-heroicons-trash-20-solid"
-                    @click="(isDeleteOpen = true) && (deleteSelectedEmail = email.name)" />
+                  <UButton
+                    icon="i-heroicons-trash-20-solid"
+                    @click="(isDeleteOpen = true) && (deleteSelectedEmail = email.name)"
+                  />
                 </UTooltip>
               </div>
             </div>
@@ -227,6 +233,7 @@ const { data: emails, error, pending, refresh: fetchEmails } = await useFetch(co
   credentials: 'include',
 })
 
+const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
@@ -248,6 +255,21 @@ const state = ref({ ...initialState })
 function resetState() {
   Object.assign(state.value, { ...initialState });
 }
+
+const filteredRows = computed(() => {
+  if (!filterInput.value) {
+    return emails.value;
+  }
+  return emails.value.filter((email) => {
+    return (
+      email.name.toLowerCase().includes(filterInput.value.toLowerCase()) ||
+      email.from.toLowerCase().includes(filterInput.value.toLowerCase()) ||
+      email.to.toLowerCase().includes(filterInput.value.toLowerCase()) ||
+      email.subject.toLowerCase().includes(filterInput.value.toLowerCase()) ||
+      email.body.toLowerCase().includes(filterInput.value.toLowerCase())
+    )
+  })
+})
 
 const deleteEmailSchema = object({
   name: string([minLength(1, 'Name is required')]),
