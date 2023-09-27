@@ -6,17 +6,15 @@
         <div class="w-1/3">
           <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for email..." />
         </div>
-        <div class="w-1/3">
-          <UTooltip text="Create email pattern">
-            <UButton icon="i-heroicons-plus-20-solid" label="Create" @click="isCreateOpen = true" />
-          </UTooltip>
-        </div>
         <div class="">
           <UTooltip text="Update email pattern list">
             <UButton icon="i-heroicons-arrow-path-20-solid" label="Refresh" @click="fetchEmails" />
           </UTooltip>
         </div>
         <div class="w-1/3 flex justify-end gap-2">
+          <UTooltip text="Create email pattern">
+            <UButton icon="i-heroicons-plus-20-solid" label="Create" @click="isCreateOpen = true" />
+          </UTooltip>
         </div>
       </div>
       <div class="grid grid-cols-3 gap-6 py-5 cursor-default">
