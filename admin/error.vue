@@ -1,22 +1,29 @@
 <template>
     <NuxtLayout>
-        <div class="grid grid-cols-1">
-            <div class="flex justify-center py-10">
-                <div class=" rounded-[5px] font-poppins-semibold bg-suse-light-green px-6 py-4 text-xl border-2">
-                    <div class="flex justify-center">
-                        <p>Hups....</p>
-                    </div>
-                    <div class="flex justify-center">
-                        <p>Error occurred</p>
-                    </div>
-                    <div class="">
-                        <p>{{ error.message }}</p>
+        <div class="cursor-default">
+            <div class="flex flex-col items-center justify-center py-5 w-full">
+                <div>
+                    <ErrorHeader />
+                </div>
+                <div class="mt-10 flex flex-col">
+                    <label class="border-2 border-red-500 rounded-lg font-semibold p-3 bg-red-500 text-white text-xl">Error Status Code</label>
+                </div>
+                <div class="flex flex-col mb-10">
+                    <div class="text-center mt-5 border-2 border-red-500 rounded-lg text-lg font-semibold mx-10 py-2 px-10">
+                        {{ error.statusCode }}
                     </div>
                 </div>
-            </div>
-            <div class="flex justify-center py-10">
-                <a class="cursor-pointer rounded-[5px] font-poppins-semibold bg-suse-light-green t text-center px-6 py-4 text-xl border-2  transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300"
-                    @click="handleError">Return to login page</a>
+                <div class="flex flex-col text-center">
+                    <label class="border-2 border-red-500 rounded-lg font-semibold p-3 bg-red-500 text-white text-xl">Error Message</label>
+                </div>
+                <div class="flex flex-col text-center">
+                    <div class="text-center mt-5 border-2 border-red-500 rounded-lg text-lg font-semibold p-2">
+                        {{ error.message }}
+                    </div>
+                </div>
+                <div class="mt-10">
+                    <UButton to="/admin/login" target="_parent" icon="i-heroicons-arrow-right-on-rectangle" size="xl" label="Return to login page" color="red" />
+                </div>
             </div>
         </div>
     </NuxtLayout>
@@ -30,10 +37,5 @@ useHead({
 })
 
 const error = useError();
-const handleError = () => {
-    clearError({
-        redirect:
-            '/admin/login',
-    })
-}
+
 </script>
