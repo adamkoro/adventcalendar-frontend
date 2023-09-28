@@ -18,10 +18,9 @@
         </div>
       </div>
       <div class="grid grid-cols-3 gap-6 py-5 cursor-default">
-        <div v-for="email in filteredRows" :key="email.Key" class="">
+        <div v-for="email in filteredRows" :key="email.key" class="">
           <div
-            class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg"
-          >
+            class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
             <UFormGroup label="Name">
               <UInput :readonly="true" v-model="email.name" />
             </UFormGroup>
@@ -42,16 +41,12 @@
               <div class="flex"></div>
               <div class="w-1/3 flex justify-end gap-1 pt-2">
                 <UTooltip text="Edit email pattern">
-                  <UButton
-                    icon="i-heroicons-pencil-square-20-solid"
-                    @click="(isEditOpen = true) && (editSelectedEmail = email)"
-                  />
+                  <UButton icon="i-heroicons-pencil-square-20-solid"
+                    @click="(isEditOpen = true) && (editSelectedEmail = email)" />
                 </UTooltip>
                 <UTooltip text="Delete email pattern">
-                  <UButton
-                    icon="i-heroicons-trash-20-solid"
-                    @click="(isDeleteOpen = true) && (deleteSelectedEmail = email.name)"
-                  />
+                  <UButton icon="i-heroicons-trash-20-solid"
+                    @click="(isDeleteOpen = true) && (deleteSelectedEmail = email.name)" />
                 </UTooltip>
               </div>
             </div>
@@ -191,7 +186,7 @@
                 @click="(isDeleteOpen = false) && (deleteSelectedEmail = '')" />
             </div>
           </template>
-          <div v-if="deleteSelectedEmail" class="flex flex-row gap-1">
+          <div v-if="deleteSelectedEmail" class="flex flex-wrap gap-1">
             <div class="">Are you sure you want to delete</div>
             <div class="text-red-600">{{ deleteSelectedEmail }}</div>
             <div class="">email pattern?</div>
@@ -342,24 +337,24 @@ useHead({
 
 definePageMeta({
   async validate() {
-    const { data, error} = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
+    const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
       method: 'GET',
       headers: useRequestHeaders(['authorization', 'cookie']),
       credentials: 'include',
     })
-  if (error.value && error.value.message.includes('fetch failed')) {
-    return createError({
-      statusCode: 500,
-      message: "Failed to connect to server"
-    })
+    if (error.value && error.value.message.includes('fetch failed')) {
+      return createError({
+        statusCode: 500,
+        message: "Failed to connect to server"
+      })
+    }
+    if (error.value && error.value.statusCode === 401) {
+      return createError({
+        statusCode: 401,
+        message: "Unauthorized"
+      })
+    }
+    return true
   }
-  if (error.value && error.value.statusCode === 401) {
-    return createError({
-      statusCode: 401,
-      message: "Unauthorized"
-    })
-  }
-  return true
-}
 })
 </script>
