@@ -12,45 +12,45 @@
             <ul class="flex items-center">
                 <div v-if="activeNavLink == 'home'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/home">Home</NuxtLink>
+                        <NuxtLink to="/admin/home" target="_parent">Home</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                        <NuxtLink to="/admin/home">Home</NuxtLink>
+                        <NuxtLink to="/admin/home" target="_parent">Home</NuxtLink>
                     </li>
                 </div>
                 <div v-if="activeNavLink == 'days'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/days">Days</NuxtLink>
+                        <NuxtLink to="/admin/days" target="_parent">Days</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                 <li
                     class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/days">Days</NuxtLink>
+                    <NuxtLink to="/admin/days" target="_parent">Days</NuxtLink>
                 </li>
                 </div>
                 <div v-if="activeNavLink == 'users'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/users">Users</NuxtLink>
+                        <NuxtLink to="/admin/users" target="_parent">Users</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                 <li
                     class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/users">Users</NuxtLink>
+                    <NuxtLink to="/admin/users" target="_parent">Users</NuxtLink>
                 </li>
                 </div>
                 <div v-if="activeNavLink == 'emails'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/emails">Emails</NuxtLink>
+                        <NuxtLink to="/admin/emails" target="_parent">Emails</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                 <li
                     class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/emails">Emails</NuxtLink>
+                    <NuxtLink to="/admin/emails" target="_parent">Emails</NuxtLink>
                 </li>
                 </div>
             </ul>
