@@ -160,8 +160,8 @@
 <script setup>
 import { ref } from 'vue'
 import { string, object, email, minLength } from 'valibot'
-import checkAuth from '~/middleware/checkAuth';
-import nuxtStorage from 'nuxt-storage';
+import nuxtStorage from 'nuxt-storage'
+
 nuxtStorage.localStorage.setData('activeNavLink', 'users')
 const config = useRuntimeConfig();
 const { data: users, error, pending, refresh: fetchUsers } = await useFetch(config.public.apiUrl + '/api/admin/usermanage/users', {
@@ -341,7 +341,26 @@ useHead({
 })
 
 definePageMeta({
-  middleware: checkAuth
+  async validate() {
+    const { data, error} = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
+      method: 'GET',
+      headers: useRequestHeaders(['authorization', 'cookie']),
+      credentials: 'include',
+    })
+  if (error.value && error.value.message.includes('fetch failed')) {
+    return createError({
+      statusCode: 500,
+      message: "Failed to connect to server"
+    })
+  }
+  if (error.value && error.value.statusCode === 401) {
+    return createError({
+      statusCode: 401,
+      message: "Unauthorized"
+    })
+  }
+  return true
+}
 })
 </script>
   
