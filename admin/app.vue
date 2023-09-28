@@ -1,11 +1,7 @@
 <template>
   <NuxtLayout>
-    <!--UContainer-->
-    <div>
-      <NuxtLoadingIndicator />
+      <NuxtLoadingIndicator color="#FE7C3F" />
       <NuxtPage />
-    </div>
-    <!--/UContainer-->
     <UNotifications />
   </NuxtLayout>
 </template>
