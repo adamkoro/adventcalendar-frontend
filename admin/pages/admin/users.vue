@@ -124,13 +124,13 @@
                 @click="(isDeleteOpen = false) && (deleteSelectedUser = '')" />
             </div>
           </template>
-          <div v-if="deleteSelectedUser" class="flex flex-row gap-1">
+          <div v-if="deleteSelectedUser" class="flex flex-wrap gap-1">
             <div class="">Are you sure you want to delete</div>
             <div class="text-red-600">{{ deleteSelectedUser }}</div>
             <div class="">?</div>
           </div>
           <div v-else>
-            <div v-if="selected && selected.length > 1" class="flex flex-row gap-1">
+            <div v-if="selected && selected.length > 1" class="flex flex-wrap gap-1">
               <div class="">Are you sure you want to delete</div>
               <div class="text-red-600">{{ selected.length - 1 }} user(s)</div>
               <div class="">?</div>
@@ -342,25 +342,25 @@ useHead({
 
 definePageMeta({
   async validate() {
-    const { data, error} = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
+    const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
       method: 'GET',
       headers: useRequestHeaders(['authorization', 'cookie']),
       credentials: 'include',
     })
-  if (error.value && error.value.message.includes('fetch failed')) {
-    return createError({
-      statusCode: 500,
-      message: "Failed to connect to server"
-    })
+    if (error.value && error.value.message.includes('fetch failed')) {
+      return createError({
+        statusCode: 500,
+        message: "Failed to connect to server"
+      })
+    }
+    if (error.value && error.value.statusCode === 401) {
+      return createError({
+        statusCode: 401,
+        message: "Unauthorized"
+      })
+    }
+    return true
   }
-  if (error.value && error.value.statusCode === 401) {
-    return createError({
-      statusCode: 401,
-      message: "Unauthorized"
-    })
-  }
-  return true
-}
 })
 </script>
   
