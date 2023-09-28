@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-    var cookie = useCookie('token')
-    if (cookie.value !== '' || cookie.value !== undefined || cookie.value !== null){
+    let cookie = useCookie('token')
+    if (typeof cookie.value === 'string' && cookie.value.length > 0){
         return navigateTo('/admin/home')
     }
 })
