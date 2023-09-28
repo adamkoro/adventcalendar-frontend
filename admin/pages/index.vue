@@ -3,8 +3,10 @@
 </template>
 
 <script setup>
-import checkAuth from "~/middleware/checkAuth"
+import routeToLogin from "~/middleware/routeToLogin";
+
+
 definePageMeta({
-    middleware: checkAuth
+    middleware: routeToLogin
 })
 </script>
