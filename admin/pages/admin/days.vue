@@ -48,59 +48,43 @@
                 </UTooltip>
                 <UTooltip text="Delete email pattern">
                   <UButton icon="i-heroicons-trash-20-solid"
-                    @click="(isDeleteOpen = true) && (deleteSelectedDay = day.id)" />
+                    @click="(isDeleteOpen = true) && (deleteSelectedDay = day)" />
                 </UTooltip>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <!-------------------------->
+      <!--- Create day pattern --->
+      <!-------------------------->
       <UModal v-model="isCreateOpen">
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
             <div class="flex items-center justify-between ">
               <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                Create email pattern
+                Create day pattern
               </h3>
               <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
                 @click="(isCreateOpen = false)" />
             </div>
           </template>
-          <UForm :schema="createEmailSchema" :state="state" @submit="createEmail">
-            <UFormGroup size="lg" label="Name of the pattern" name="name"
-              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.name" />
-              <p>New</p-->
-              <UInput v-model="state.name" placeholder="Enter a pattern name..." />
+          <UForm :schema="createDaySchema" :state="state" @submit="createDay">
+            <UFormGroup size="lg" label="Year" name="year" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
+              class="pb-4" error>
+              <UInput v-model="yearAsNumber" placeholder="Enter the year..." />
             </UFormGroup>
-            <UFormGroup size="lg" label="From email address" name="from"
-              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.from" />
-              <p>New</p-->
-              <UInput v-model="state.from" placeholder="Enter a from email address..." />
+            <UFormGroup size="lg" label="Day" name="day" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
+              class="pb-4" error>
+              <UInput v-model="dayAsNumber" placeholder="Enter the day..." />
             </UFormGroup>
-            <UFormGroup size="lg" label="To email address" name="to"
-              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.to" />
-              <p>New</p-->
-              <UInput v-model="state.to" placeholder="Enter to email address(s)..." />
+            <UFormGroup size="lg" label="Title" name="title" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
+              class="pb-4" error>
+              <UInput v-model="state.title" placeholder="Enter the title..." />
             </UFormGroup>
-            <UFormGroup size="lg" label="Subject of the email" name="subject"
+            <UFormGroup size="lg" label="Content" name="content"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.subject" />
-              <p>New</p-->
-              <UInput v-model="state.subject" placeholder="Enter a subject..." />
-            </UFormGroup>
-            <UFormGroup size="lg" label="Body of the email" name="body"
-              :ui="{ label: { base: 'font-semibold text-black text-l' } }" error>
-              <!--p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.body" />
-              <p>New</p-->
-              <UTextarea v-model="state.body" placeholder="Enter a subject..." autoresize />
+              <UTextarea v-model="state.content" placeholder="Enter the content..." autoresize />
             </UFormGroup>
           </UForm>
           <template #footer>
@@ -110,7 +94,7 @@
                   <UIcon name="i-heroicons-no-symbol-20-solid" />
                 </template>
               </UButton>
-              <UButton type="submit" size="xl" label="Save" @click="createEmail">
+              <UButton type="submit" size="xl" label="Save" @click="createDay">
                 <template #trailing>
                   <UIcon name="i-heroicons-check-20-solid" />
                 </template>
@@ -119,6 +103,9 @@
           </template>
         </UCard>
       </UModal>
+      <!-------------------------->
+      <!--- Delete day pattern --->
+      <!-------------------------->
       <UModal v-model="isDeleteOpen">
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
@@ -132,8 +119,13 @@
           </template>
           <div v-if="deleteSelectedDay" class="flex flex-wrap gap-1">
             <div class="">Are you sure you want to delete</div>
-            <div class=" text-red-600">{{ deleteSelectedDay }}</div>
-            <div class="">email pattern?</div>
+            <div class="font-semibold">Year:</div>
+            <div class="text-red-600">{{ deleteSelectedDay.year }}</div>
+            <div class="font-semibold">Day:</div>
+            <div class="text-red-600">{{ deleteSelectedDay.day }}</div>
+            <div class="font-semibold">Title:</div>
+            <div class="text-red-600">{{ deleteSelectedDay.title }}</div>
+            <div class="">day?</div>
           </div>
           <template #footer>
             <div class="flex justify-between">
@@ -155,43 +147,51 @@
   </UContainer>
 </template>
   
-<script setup >
+<script setup>
 import { ref } from 'vue'
-import { string, object, email, minLength } from 'valibot'
+import { string, object, minLength, number, maxLength, minValue, maxValue, value, any } from 'valibot'
 import nuxtStorage from 'nuxt-storage'
 import checkCookie from '~/middleware/checkCookie'
-
+//////////////////////////
+// Set local storage value
+//////////////////////////
 nuxtStorage.localStorage.setData('activeNavLink', 'days')
+//////////////////////////
+// Fetch data
+//////////////////////////
 const { data: days, error, pending, refresh: fetchEmails } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
 })
-
+//////////////////////////
+// Variables
+//////////////////////////
 const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
-const deleteSelectedDay = ref('')
+const deleteSelectedDay = ref(any())
 const editSelectedDay = ref('')
 const toast = useToast()
-
+//////////////////////////
+// Day state
+//////////////////////////
 function initialState() {
   return {
-    name: undefined,
-    from: undefined,
-    to: undefined,
-    subject: undefined,
-    body: undefined
+    year: undefined,
+    day: undefined,
+    title: undefined,
+    content: undefined,
   }
 }
-
 const state = ref({ ...initialState })
-
 function resetState() {
   Object.assign(state.value, { ...initialState });
 }
-
+//////////////////////////
+// Filter data
+//////////////////////////
 const filteredRows = computed(() => {
   if (!filterInput.value) {
     return days.value;
@@ -206,83 +206,69 @@ const filteredRows = computed(() => {
     )
   })
 })
-const deleteEmailSchema = object({
-  name: string([minLength(1, 'Name is required')]),
+//////////////////////////
+// Convert input string
+//////////////////////////
+const yearAsNumber = computed({
+  get: () => state.value.year,
+  set: (newValue) => { state.value.year = Number(newValue) }
 })
-
-const createEmailSchema = object({
-  name: string([minLength(1, 'Name is required')]),
-  from: string([email('Invalid email')]),
-  to: string([minLength(1, 'To email address(es) is(are) required')]),
-  subject: string([minLength(1, 'Subject is required')]),
-  body: string([minLength(1, 'Body is required')])
+const dayAsNumber = computed({
+  get: () => state.value.day,
+  set: (newValue) => { state.value.day = Number(newValue) }
 })
-
-function showError(error) {
-  toast.add({ title: 'Error', description: error, icon: 'i-heroicons-no-symbol-20-solid' })
-}
-
-async function createEmail() {
+//////////////////////////
+// Day schema validation
+//////////////////////////
+const createDaySchema = object({
+  year: number([minValue(1900, 'Minimum value is: 1900'),maxValue(9999, 'Maximum value is: 9999')]),
+  day: number([minValue(1, 'Minimum value is: 1'),maxValue(31, 'Maximum value is: 31')]),
+  title: string([minLength(1, 'Minimum length is: 1 character'), maxLength(255, 'Maximum length is: 255 characters')]),
+  content: string([minLength(1, 'Minimum length is: 1 character'), maxLength(65555, 'Maximum length is: 65555 characters')])
+})
+//////////////////////////
+// Day functions
+//////////////////////////
+async function createDay() {
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
     method: 'POST',
-    body: JSON.stringify({ name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
+    body: JSON.stringify({ year: yearAsNumber.value, day: dayAsNumber.value, title: state.value.title, content: state.value.content }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'Day create error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'Day create error', description: error.value.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
   }
   if (data.value) {
     isCreateOpen.value = false
     fetchEmails()
-    toast.add({ title: 'Day successfully updated', description: 'Day ' + state.value.name + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+    toast.add({ title: 'Day successfully created', description: 'Year: '+yearAsNumber.value+' day: '+dayAsNumber.value+' title: '+state.value.title+' created', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
-
 async function deleteDay() {
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
     method: 'DELETE',
-    body: JSON.stringify({ id: deleteSelectedDay.value }),
+    body: JSON.stringify({ id: deleteSelectedDay.value.id }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'Day delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'Day delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
     return
   }
   isDeleteOpen.value = false
   fetchEmails()
-  toast.add({ title: 'Day successfully deleted', description: 'Day ' + deleteSelectedDay.value + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+  toast.add({ title: 'Day successfully deleted', description: 'Year: '+yearAsNumber.value+' day: '+dayAsNumber.value+' title: '+state.value.title+' deleted', icon: 'i-heroicons-check-circle-20-solid' })
   deleteSelectedDay.value = ''
 }
-
+//////////////////////////
+// Page meta
+//////////////////////////
 useHead({
-  title: `Email Management`,
+  title: `Days Management`,
   link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
-
 definePageMeta({
   middleware: checkCookie,
-    /*async validate() {
-    const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
-      method: 'GET',
-      headers: useRequestHeaders(['authorization', 'cookie']),
-      credentials: 'include',
-    })
-    if (error.value && error.value.message.includes('fetch failed')) {
-      return createError({
-        statusCode: 500,
-        message: "Failed to connect to server"
-      })
-    }
-    if (error.value && error.value.statusCode === 401) {
-      return createError({
-        statusCode: 401,
-        message: "Unauthorized"
-      })
-    }
-    return true
-  }*/
 })
 </script>
-  
