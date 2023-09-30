@@ -37,15 +37,18 @@
 
 <script setup>
 import { ref } from 'vue'
-import { string, object, minLength } from 'valibot'
+import { string, object, minLength, maxLength } from 'valibot'
 import checkCookie from '~/middleware/checkCookie';
-
+///////////////////////////
+// Variables
+///////////////////////////
 const isLoginError = ref(false)
 const loginError = ref('')
 const toast = useToast()
 const router = useRouter()
-
-const saltRounds = 14;
+///////////////////////////
+// State
+///////////////////////////
 function initialState() {
     return {
         username: undefined,
@@ -53,10 +56,16 @@ function initialState() {
     }
 }
 const state = ref({ ...initialState })
+///////////////////////////
+// Schema validation
+///////////////////////////
 const loginSchema = object({
-    username: string([minLength(1, 'Required')]),
-    password: string([minLength(1, 'Required')]),
+    username: string([minLength(1, 'Required'),maxLength(32, 'Username must be less than 32 characters')]),
+    password: string([minLength(4, 'Required')]),
 })
+///////////////////////////
+// Login function
+///////////////////////////
 async function login() {
     const { data, error } = await useFetch(useRuntimeConfig().public.authUrl + '/api/auth/login', {
         method: 'POST',
@@ -84,7 +93,9 @@ async function login() {
         isLoginError.value = true
     }
 }
-
+///////////////////////////
+// Page meta
+///////////////////////////
 useHead({
     title: `Admin Login`,
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
@@ -92,5 +103,4 @@ useHead({
 definePageMeta({
     middleware: checkCookie
 })
-
 </script>
