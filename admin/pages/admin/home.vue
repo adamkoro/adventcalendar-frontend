@@ -8,6 +8,7 @@
 
 <script setup>
 import nuxtStorage from 'nuxt-storage'
+import checkCookie from '~/middleware/checkCookie'
 
 nuxtStorage.localStorage.setData('activeNavLink', 'home')
 
@@ -16,6 +17,6 @@ useHead({
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
 definePageMeta({
-
+    middleware: checkCookie
 })
 </script>

@@ -161,6 +161,7 @@
 import { ref } from 'vue'
 import { string, object, email, minLength } from 'valibot'
 import nuxtStorage from 'nuxt-storage'
+import checkCookie from '~/middleware/checkCookie';
 
 nuxtStorage.localStorage.setData('activeNavLink', 'users')
 const config = useRuntimeConfig();
@@ -341,7 +342,8 @@ useHead({
 })
 
 definePageMeta({
-  async validate() {
+    middleware: checkCookie
+  /*async validate() {
     const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
       method: 'GET',
       headers: useRequestHeaders(['authorization', 'cookie']),
@@ -360,7 +362,7 @@ definePageMeta({
       })
     }
     return true
-  }
+  }*/
 })
 </script>
   

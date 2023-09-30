@@ -159,6 +159,7 @@
 import { ref } from 'vue'
 import { string, object, email, minLength } from 'valibot'
 import nuxtStorage from 'nuxt-storage'
+import checkCookie from '~/middleware/checkCookie'
 
 nuxtStorage.localStorage.setData('activeNavLink', 'days')
 const { data: days, error, pending, refresh: fetchEmails } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
@@ -261,7 +262,8 @@ useHead({
 })
 
 definePageMeta({
-  async validate() {
+  middleware: checkCookie,
+    /*async validate() {
     const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
       method: 'GET',
       headers: useRequestHeaders(['authorization', 'cookie']),
@@ -280,7 +282,7 @@ definePageMeta({
       })
     }
     return true
-  }
+  }*/
 })
 </script>
   
