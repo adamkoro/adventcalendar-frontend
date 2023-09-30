@@ -323,9 +323,15 @@ async function updateDay() {
   } else {
     localDay.value = dayAsNumber.value
   }
+  if (state.value.title === undefined) {
+    state.value.title = editSelectedDay.value.title
+  }
+  if (state.value.content === undefined) {
+    state.value.content = editSelectedDay.value.content
+  }
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
     method: 'PUT',
-    body: JSON.stringify({ id: editSelectedDay.value.id, year: localYear.value, day: localDay.value, title: editSelectedDay.value.title, content: editSelectedDay.value.content }),
+    body: JSON.stringify({ id: editSelectedDay.value.id, year: localYear.value, day: localDay.value, title: state.value.title, content: state.value.content }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
     credentials: 'include',
   })
@@ -333,9 +339,11 @@ async function updateDay() {
     toast.add({ title: 'Day update error', description: error.value.data + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
     return
   }
-  isEditOpen.value = false
-  fetchDays()
-  toast.add({ title: 'Day successfully updated', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
+  if (data.value) {
+    isEditOpen.value = false
+    fetchDays()
+    toast.add({ title: 'Day successfully updated', description: 'Year: ' + localYear.value + ' day: ' + localDay.value + ' id: ' + editSelectedDay.value.id + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
+  }
 }
 async function deleteDay() {
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
@@ -348,10 +356,12 @@ async function deleteDay() {
     toast.add({ title: 'Day delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
     return
   }
-  isDeleteOpen.value = false
-  fetchDays()
-  toast.add({ title: 'Day successfully deleted', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
-  deleteSelectedDay.value = ''
+  if (data.value) {
+    isDeleteOpen.value = false
+    fetchDays()
+    toast.add({ title: 'Day successfully deleted', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+    deleteSelectedDay.value = ''
+  }
 }
 //////////////////////////
 // Page meta
