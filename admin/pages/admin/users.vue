@@ -29,6 +29,9 @@
           </UDropdown>
         </template>
       </UTable>
+      <!-------------------------->
+      <!-- Create user pattern --->
+      <!-------------------------->
       <UModal v-model="isCreateOpen">
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
@@ -41,16 +44,16 @@
             </div>
           </template>
           <UForm :schema="createUserSchema" :state="state" @submit="createUser">
-            <UFormGroup size="xl" label="Username" name="username"
-              :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
+            <UFormGroup size="lg" label="Username" name="username"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               <UInput v-model="state.username" placeholder="Enter username..." />
             </UFormGroup>
-            <UFormGroup size="xl" label="Email" name="email" :ui="{ label: { base: 'font-semibold text-black text-xl' } }"
-              error>
+            <UFormGroup size="lg" label="Email" name="email" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
+              class="pb-4" error>
               <UInput v-model="state.email" type="email" placeholder="Enter email..." />
             </UFormGroup>
-            <UFormGroup size="xl" label="Password" name="password"
-              :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
+            <UFormGroup size="lg" label="Password" name="password"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               <UInput v-model="state.password" type="password" placeholder="Enter password..." />
             </UFormGroup>
           </UForm>
@@ -71,30 +74,37 @@
           </template>
         </UCard>
       </UModal>
+      <!-------------------------->
+      <!---- Edit user pattern --->
+      <!-------------------------->
       <UModal v-model="isEditOpen">
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
             <div class="flex items-center justify-between ">
               <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
                 Edit user
+                |
+                {{ editSelectedUser.username }}
               </h3>
               <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
                 @click="(isEditOpen = false) && (editSelectedUser = '')" />
             </div>
           </template>
-          <UForm :schema="editUserSchema" :state="state" @submit="updateUser">
-            <UFormGroup size="xl" label="Username" name="username"
-              :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
+          <UForm :schema="createUserSchema" :state="state" @submit="updateUser">
+            <UFormGroup size="lg" label="Username" name="username"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               {{ editSelectedUser.username }}
             </UFormGroup>
-            <UFormGroup size="xl" label="Email" name="email" :ui="{ label: { base: 'font-semibold text-black text-xl' } }"
-              error>
-              <div> Current email: {{ editSelectedUser.email }}</div>
+            <UFormGroup size="lg" label="Email" name="email" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
+              class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedUser.email" />
+              <p>New</p>
               <UInput v-model="state.email" type="email" placeholder="Enter new email..." />
             </UFormGroup>
-            <UFormGroup size="xl" label="Password" name="password"
-              :ui="{ label: { base: 'font-semibold text-black text-xl' } }" error>
-              <UInput v-model="state.password" type="password" placeholder="Enter password..." />
+            <UFormGroup size="lg" label="Password" name="password"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
+              <UInput v-model="state.password" type="password" placeholder="Enter a new password..." />
             </UFormGroup>
           </UForm>
           <template #footer>
@@ -113,6 +123,9 @@
           </template>
         </UCard>
       </UModal>
+      <!-------------------------->
+      <!-- Delete user pattern --->
+      <!-------------------------->
       <UModal v-model="isDeleteOpen">
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
@@ -159,18 +172,24 @@
   
 <script setup>
 import { ref } from 'vue'
-import { string, object, email, minLength } from 'valibot'
+import { string, object, email, minLength, maxLength } from 'valibot'
 import nuxtStorage from 'nuxt-storage'
 import checkCookie from '~/middleware/checkCookie';
-
+//////////////////////////
+// Set local storage value
+//////////////////////////
 nuxtStorage.localStorage.setData('activeNavLink', 'users')
-const config = useRuntimeConfig();
-const { data: users, error, pending, refresh: fetchUsers } = await useFetch(config.public.apiUrl + '/api/admin/usermanage/users', {
+//////////////////////////
+// Fetch data
+//////////////////////////
+const { data: users, error, pending, refresh: fetchUsers } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
 })
-
+//////////////////////////
+// User state
+//////////////////////////
 function initialState() {
   return {
     username: undefined,
@@ -178,12 +197,13 @@ function initialState() {
     password: undefined
   }
 }
-
 const state = ref({ ...initialState })
 function resetState() {
   Object.assign(state.value, { ...initialState });
 }
-
+//////////////////////////
+// Variables
+//////////////////////////
 const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
@@ -192,7 +212,9 @@ const selected = ref([users[0]])
 const deleteSelectedUser = ref('')
 const editSelectedUser = ref('')
 const toast = useToast()
-
+//////////////////////////
+// Table columns
+//////////////////////////
 const columns = [
   { key: 'id', label: 'ID', sortable: true },
   { key: 'username', label: 'Username', sortable: true },
@@ -201,19 +223,9 @@ const columns = [
   { key: 'modified', label: 'Updated', sortable: true },
   { key: 'actions' }
 ]
-
-
-const filteredRows = computed(() => {
-  if (!filterInput.value) {
-    return users.value
-  }
-  return users.value.filter((person) => {
-    return Object.values(person).some((value) => {
-      return String(value).toLowerCase().includes(filterInput.value.toLowerCase())
-    })
-  })
-})
-
+//////////////////////////
+// Table actions
+//////////////////////////
 const items = (row) => [
   [{
     label: 'Edit',
@@ -225,23 +237,9 @@ const items = (row) => [
     click: () => (isDeleteOpen.value = true) && (deleteSelectedUser.value = row.username)
   }]
 ]
-
-
-const createUserSchema = object({
-  username: string([minLength(1, 'Required')]),
-  email: string([email('Invalid email')]),
-  password: string([minLength(1, 'Required')])
-})
-
-
-const deleteUserSchema = object({
-  username: string([minLength(1, 'Required')]),
-})
-
-const editUserSchema = object({
-  email: string([email('Invalid email')]),
-})
-
+//////////////////////////
+// Select functions
+//////////////////////////
 function select(row) {
   const index = selected.value.findIndex((item) => item.id === row.id)
   if (index === -1) {
@@ -250,11 +248,30 @@ function select(row) {
     selected.value.splice(index, 1)
   }
 }
-
-function showError(error) {
-  toast.add({ title: 'Error', description: error, icon: 'i-heroicons-no-symbol-20-solid' })
-}
-
+//////////////////////////
+// Filter functions
+//////////////////////////
+const filteredRows = computed(() => {
+  if (!filterInput.value) {
+    return users.value
+  }
+  return users.value.filter((person) => {
+    return Object.values(person).some((value) => {
+      return String(value).toLowerCase().includes(filterInput.value.toLowerCase())
+    })
+  })
+})
+//////////////////////////
+// Validation schemas
+//////////////////////////
+const createUserSchema = object({
+  username: string([minLength(1, 'Minimum 1 character'), maxLength(32, 'Maximum 32 characters')]),
+  email: string([email(1, 'Invalid email')]),
+  password: string([minLength(4, 'Minimum 4 characters')]),
+})
+//////////////////////////
+// User functions
+//////////////////////////
 async function createUser() {
   const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/user', {
     method: 'POST',
@@ -263,21 +280,21 @@ async function createUser() {
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'User create error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
+    toast.add({ title: 'User create error', description: error.value.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
   }
   if (data.value) {
     isCreateOpen.value = false
-    state.value = {
-      username: undefined,
-      email: undefined,
-      password: undefined
-    }
     fetchUsers()
     toast.add({ title: 'User successfully created', description: state.value.username + ' created', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
-
 async function updateUser() {
+  if (state.value.email === undefined) {
+    state.value.email = editSelectedUser.value.email
+  }
+  if (state.value.password === undefined) {
+    state.value.password = ''
+  }
   const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/user', {
     method: 'PUT',
     body: JSON.stringify({ username: editSelectedUser.value.username, email: state.value.email, password: state.value.password }),
@@ -285,21 +302,14 @@ async function updateUser() {
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'User update error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
+    toast.add({ title: 'User update error', description: error.value.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
   }
   if (data.value) {
     isEditOpen.value = false
-    state.value = {
-      username: undefined,
-      email: undefined,
-      password: undefined
-    }
-    editSelectedUser.value = ''
     fetchUsers()
-    toast.add({ title: 'User successfully updated', description: editSelectedUser.value.username + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+    toast.add({ title: 'User successfully updated', description: editSelectedUser.value.username + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
-
 async function deleteUser() {
   if (selected.value.length > 1) {
     for (let i = 1; i < selected.value.length; i++) {
@@ -310,7 +320,7 @@ async function deleteUser() {
         credentials: 'include',
       })
       if (error.value) {
-        toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
+        toast.add({ title: 'User delete error', description: error.value.error + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
         return
       }
       toast.add({ title: 'User successfully deleted', description: selected.value[i].username + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
@@ -326,43 +336,22 @@ async function deleteUser() {
       credentials: 'include',
     })
     if (error.value) {
-      toast.add({ title: 'User delete error', description: error.value.data.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
+      toast.add({ title: 'User delete error', description: error.value.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
       return
     }
     isDeleteOpen.value = false
-    deleteSelectedUser.value = ''
     fetchUsers()
     toast.add({ title: 'User successfully deleted', description: deleteSelectedUser.value + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
-
+//////////////////////////
+// Page meta
+//////////////////////////
 useHead({
   title: `User Management`,
   link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
-
 definePageMeta({
-    middleware: checkCookie
-  /*async validate() {
-    const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
-      method: 'GET',
-      headers: useRequestHeaders(['authorization', 'cookie']),
-      credentials: 'include',
-    })
-    if (error.value && error.value.message.includes('fetch failed')) {
-      return createError({
-        statusCode: 500,
-        message: "Failed to connect to server"
-      })
-    }
-    if (error.value && error.value.statusCode === 401) {
-      return createError({
-        statusCode: 401,
-        message: "Unauthorized"
-      })
-    }
-    return true
-  }*/
+  middleware: checkCookie
 })
 </script>
-  
