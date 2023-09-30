@@ -216,25 +216,34 @@
   
 <script setup>
 import { ref } from 'vue'
-import { string, object, email, minLength, } from 'valibot'
+import { string, object, email, minLength, any, } from 'valibot'
 import nuxtStorage from 'nuxt-storage'
 import checkCookie from '~/middleware/checkCookie'
-
+//////////////////////////
+// Set local storage value
+//////////////////////////
 nuxtStorage.localStorage.setData('activeNavLink', 'emails')
+//////////////////////////
+// Fetch data
+//////////////////////////
 const { data: emails, error, pending, refresh: fetchEmails } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
 })
-
+//////////////////////////
+// Variables
+//////////////////////////
 const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
 const deleteSelectedEmail = ref('')
-const editSelectedEmail = ref('')
+const editSelectedEmail = ref(any())
 const toast = useToast()
-
+//////////////////////////
+// Email state
+//////////////////////////
 function initialState() {
   return {
     name: undefined,
@@ -245,11 +254,12 @@ function initialState() {
   }
 }
 const state = ref({ ...initialState })
-
 function resetState() {
   Object.assign(state.value, { ...initialState });
 }
-
+//////////////////////////
+// Filter data
+//////////////////////////
 const filteredRows = computed(() => {
   if (!filterInput.value) {
     return emails.value;
@@ -264,11 +274,9 @@ const filteredRows = computed(() => {
     )
   })
 })
-
-const deleteEmailSchema = object({
-  name: string([minLength(1, 'Name is required')]),
-})
-
+//////////////////////////
+// Email schema validation
+//////////////////////////
 const createEmailSchema = object({
   name: string([minLength(1, 'Name is required')]),
   from: string([email(1, 'Invalid email')]),
@@ -276,11 +284,9 @@ const createEmailSchema = object({
   subject: string([minLength(1, 'Subject is required')]),
   body: string([minLength(1, 'Body is required')])
 })
-
-function showError(error) {
-  toast.add({ title: 'Error', description: error, icon: 'i-heroicons-no-symbol-20-solid' })
-}
-
+//////////////////////////
+// Email functions
+//////////////////////////
 async function createEmail() {
   const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
     method: 'POST',
@@ -297,24 +303,37 @@ async function createEmail() {
     toast.add({ title: 'Email successfully updated', description: state.value.name + ' created', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
-
-/*async function updateEmail() {
+async function updateEmail() {
+  if (state.value.name === undefined) {
+    state.value.name = editSelectedEmail.value.name
+  }
+  if (state.value.from === undefined) {
+    state.value.from = editSelectedEmail.value.from
+  }
+  if (state.value.to === undefined) {
+    state.value.to = editSelectedEmail.value.to
+  }
+  if (state.value.subject === undefined) {
+    state.value.subject = editSelectedEmail.value.subject
+  }
+  if (state.value.body === undefined) {
+    state.value.body = editSelectedEmail.value.body
+  }
   const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
     method: 'PUT',
-    body: JSON.stringify({ name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
+    body: JSON.stringify({ key: editSelectedEmail.value.key,name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
     credentials: 'include',
   })
   if (error.value) {
-    toast.add({ title: 'Email create error', description: error.value.data.error+ '', icon: 'i-heroicons-no-symbol-20-solid' })
+    toast.add({ title: 'Email create error', description: error.value.error + '', icon: 'i-heroicons-no-symbol-20-solid' })
   }
   if (data.value) {
-    isCreateOpen.value = false
+    isEditOpen.value = false
     fetchEmails()
-    toast.add({ title: 'Email successfully updated', description: state.value.name + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+    toast.add({ title: 'Email successfully updated', description: editSelectedEmail.value.name + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
   }
-}*/
-
+}
 async function deleteEmail() {
   const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
     method: 'DELETE',
@@ -332,12 +351,13 @@ async function deleteEmail() {
   fetchEmails()
   deleteSelectedEmail.value = ''
 }
-
+//////////////////////////
+// Page meta
+//////////////////////////
 useHead({
   title: `Email Management`,
   link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
-
 definePageMeta({
   middleware: checkCookie,
 })
