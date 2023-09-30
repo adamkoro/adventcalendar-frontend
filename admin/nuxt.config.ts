@@ -10,4 +10,9 @@ export default defineNuxtConfig({
       publicUrl: 'http://localhost:8088',
     },
   },
+  /*debug: true,
+  sourcemap: {
+    server: true,
+    client: true
+  },*/
 })
