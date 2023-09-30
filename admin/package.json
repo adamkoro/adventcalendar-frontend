@@ -5,7 +5,7 @@
     "build": "nuxt build",
     "dev": "NITRO_PORT=3030 nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "preview": "NITRO_PORT=3030 nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
