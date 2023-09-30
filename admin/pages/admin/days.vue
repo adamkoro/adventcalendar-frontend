@@ -8,7 +8,7 @@
         </div>
         <div class="">
           <UTooltip text="Update day list">
-            <UButton icon="i-heroicons-arrow-path-20-solid" label="Refresh" @click="fetchEmails" />
+            <UButton icon="i-heroicons-arrow-path-20-solid" label="Refresh" @click="fetchDays" />
           </UTooltip>
         </div>
         <div class="w-1/3 flex justify-end gap-2">
@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="grid grid-cols-3 gap-6 py-5 cursor-default">
-        <div v-for="day in filteredRows" :key="day.id" class="">
+        <div v-for="day in filteredDays" :key="day.id" class="">
           <div
             class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
             <UFormGroup label="Id">
@@ -104,6 +104,68 @@
         </UCard>
       </UModal>
       <!-------------------------->
+      <!---- Edit day pattern ---->
+      <!-------------------------->
+      <UModal v-model="isEditOpen">
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+          <template #header>
+            <div class="flex items-center justify-between ">
+              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                Edit day pattern
+                |
+                Id: {{ editSelectedDay.id }}
+              </h3>
+              <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
+                @click="(isEditOpen = false)" />
+            </div>
+          </template>
+          <UForm :schema="createDaySchema" :state="state" @submit="updateDay">
+            <UFormGroup size="lg" label="Year" name="year" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
+              class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedDay.year" />
+              <p>New</p>
+              <UInput v-model="yearAsNumber" placeholder="Enter year..." />
+            </UFormGroup>
+            <UFormGroup size="lg" label="Day" name="to" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
+              class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedDay.day" />
+              <p>New</p>
+              <UInput v-model="dayAsNumber" placeholder="Enter day..." />
+            </UFormGroup>
+            <UFormGroup size="lg" label="Title" name="subject"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedDay.title" />
+              <p>New</p>
+              <UInput v-model="state.title" placeholder="Enter title..." />
+            </UFormGroup>
+            <UFormGroup size="lg" label="Content" name="content"
+              :ui="{ label: { base: 'font-semibold text-black text-l' } }" error>
+              <p>Current</p>
+              <UInput :readonly="true" v-model="editSelectedDay.content" />
+              <p>New</p>
+              <UTextarea v-model="state.content" placeholder="Enter text..." autoresize />
+            </UFormGroup>
+          </UForm>
+          <template #footer>
+            <div class="flex justify-between">
+              <UButton type="cancel" size="xl" label="Cancel" @click="(isEditOpen = false)">
+                <template #trailing>
+                  <UIcon name="i-heroicons-no-symbol-20-solid" />
+                </template>
+              </UButton>
+              <UButton type="submit" size="xl" label="Save" @click="updateDay">
+                <template #trailing>
+                  <UIcon name="i-heroicons-check-20-solid" />
+                </template>
+              </UButton>
+            </div>
+          </template>
+        </UCard>
+      </UModal>
+      <!-------------------------->
       <!--- Delete day pattern --->
       <!-------------------------->
       <UModal v-model="isDeleteOpen">
@@ -159,7 +221,7 @@ nuxtStorage.localStorage.setData('activeNavLink', 'days')
 //////////////////////////
 // Fetch data
 //////////////////////////
-const { data: days, error, pending, refresh: fetchEmails } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
+const { data: days, error, pending, refresh: fetchDays } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
@@ -172,7 +234,7 @@ const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
 const deleteSelectedDay = ref(any())
-const editSelectedDay = ref('')
+const editSelectedDay = ref(any())
 const toast = useToast()
 //////////////////////////
 // Day state
@@ -192,15 +254,18 @@ function resetState() {
 //////////////////////////
 // Filter data
 //////////////////////////
-const filteredRows = computed(() => {
+const filteredDays = computed(() => {
   if (!filterInput.value) {
     return days.value;
   }
   return days.value.filter((day) => {
+    // TODO Fix this search function, it's not working properly when searching for numbers
+    const stYear = new Date(day.year).toLocaleDateString('en-US', { year: 'numeric' });
+    const stDay = new Date(day.day).toLocaleDateString('en-US', { day: 'numeric' });
     return (
       day.id.toLowerCase().includes(filterInput.value.toLowerCase()) ||
-      day.year.toLowerCase().includes(filterInput.value.toLowerCase()) ||
-      day.day.toLowerCase().includes(filterInput.value.toLowerCase()) ||
+      stYear.toLowerCase().includes(filterInput.value.toLowerCase()) ||
+      stDay.toLowerCase().includes(filterInput.value.toLowerCase()) ||
       day.title.toLowerCase().includes(filterInput.value.toLowerCase()) ||
       day.content.toLowerCase().includes(filterInput.value.toLowerCase())
     )
@@ -221,8 +286,8 @@ const dayAsNumber = computed({
 // Day schema validation
 //////////////////////////
 const createDaySchema = object({
-  year: number([minValue(1900, 'Minimum value is: 1900'),maxValue(9999, 'Maximum value is: 9999')]),
-  day: number([minValue(1, 'Minimum value is: 1'),maxValue(31, 'Maximum value is: 31')]),
+  year: number([minValue(1900, 'Minimum value is: 1900'), maxValue(9999, 'Maximum value is: 9999')]),
+  day: number([minValue(1, 'Minimum value is: 1'), maxValue(31, 'Maximum value is: 31')]),
   title: string([minLength(1, 'Minimum length is: 1 character'), maxLength(255, 'Maximum length is: 255 characters')]),
   content: string([minLength(1, 'Minimum length is: 1 character'), maxLength(65555, 'Maximum length is: 65555 characters')])
 })
@@ -242,8 +307,35 @@ async function createDay() {
   if (data.value) {
     isCreateOpen.value = false
     fetchEmails()
-    toast.add({ title: 'Day successfully created', description: 'Year: '+yearAsNumber.value+' day: '+dayAsNumber.value+' title: '+state.value.title+' created', icon: 'i-heroicons-check-circle-20-solid' })
+    toast.add({ title: 'Day successfully created', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' created', icon: 'i-heroicons-check-circle-20-solid' })
   }
+}
+async function updateDay() {
+  const localYear = ref('')
+  const localDay = ref('')
+  if (yearAsNumber.value === undefined) {
+    localYear.value = Number(editSelectedDay.value.year)
+  } else {
+    localYear.value = yearAsNumber.value
+  }
+  if (dayAsNumber.value === undefined) {
+    localDay.value = Number(editSelectedDay.value.day)
+  } else {
+    localDay.value = dayAsNumber.value
+  }
+  const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
+    method: 'PUT',
+    body: JSON.stringify({ id: editSelectedDay.value.id, year: localYear.value, day: localDay.value, title: editSelectedDay.value.title, content: editSelectedDay.value.content }),
+    headers: useRequestHeaders(['authorization', 'cookie',]),
+    credentials: 'include',
+  })
+  if (error.value) {
+    toast.add({ title: 'Day update error', description: error.value.data + '', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
+    return
+  }
+  isEditOpen.value = false
+  fetchDays()
+  toast.add({ title: 'Day successfully updated', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
 }
 async function deleteDay() {
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
@@ -257,8 +349,8 @@ async function deleteDay() {
     return
   }
   isDeleteOpen.value = false
-  fetchEmails()
-  toast.add({ title: 'Day successfully deleted', description: 'Year: '+yearAsNumber.value+' day: '+dayAsNumber.value+' title: '+state.value.title+' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+  fetchDays()
+  toast.add({ title: 'Day successfully deleted', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
   deleteSelectedDay.value = ''
 }
 //////////////////////////
