@@ -265,6 +265,8 @@ function reset() {
 }
 function resetState() {
   state.value = reset();
+  editSelectedEmail.value = null;
+  deleteSelectedEmail.value = null;
 }
 //////////////////////////
 // Filter data
@@ -336,7 +338,6 @@ async function updateEmail() {
     fetchEmails()
     toast.add({ title: 'Email successfully updated', description: editSelectedEmail.value.name + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
     resetState()
-    editSelectedEmail.value = ''
   }
 }
 async function deleteEmail() {
@@ -355,7 +356,6 @@ async function deleteEmail() {
   fetchEmails()
   toast.add({ title: 'Email successfully deleted', description: deleteSelectedEmail.value + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
   resetState()
-  deleteSelectedEmail.value = ''
 }
 //////////////////////////
 // Page meta

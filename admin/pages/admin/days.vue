@@ -259,6 +259,8 @@ function reset() {
 }
 function resetState() {
   state.value = reset();
+  deleteSelectedDay.value = null;
+  editSelectedDay.value = null;
 }
 //////////////////////////
 // Filter data
@@ -357,7 +359,6 @@ async function updateDay() {
     fetchDays()
     toast.add({ title: 'Day successfully updated', description: 'Year: ' + localYear.value + ' day: ' + localDay.value + ' id: ' + editSelectedDay.value.id + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
     resetState()
-    editSelectedDay.value = ''
   }
 }
 async function deleteDay() {
@@ -381,7 +382,6 @@ async function deleteDay() {
     fetchDays()
     toast.add({ title: 'Day successfully deleted', description: 'Year: ' + state.value.year + ' day: ' + state.value.day + ' title: ' + state.value.title + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
     resetState()
-    deleteSelectedDay.value = ''
   }
 }
 //////////////////////////
