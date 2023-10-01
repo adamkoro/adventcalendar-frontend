@@ -69,8 +69,7 @@
     </header>
 </template>
 <script setup>
-import nuxtStorage from 'nuxt-storage';
-const activeNavLink = nuxtStorage.localStorage.getData('activeNavLink')
+const activeNavLink = localStorage.getItem('activeNavLink')
 const username = useCookie('username')
 const logout = async () => {
     const { data, error } = await useFetch(useRuntimeConfig().public.authUrl + '/api/auth/logout', {

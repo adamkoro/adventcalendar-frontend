@@ -7,10 +7,9 @@
 </template>
 
 <script setup>
-import nuxtStorage from 'nuxt-storage'
 import checkCookie from '~/middleware/checkCookie'
 
-nuxtStorage.localStorage.setData('activeNavLink', 'home', 1440)
+localStorage.setItem('activeNavLink', 'home')
 
 useHead({
     title: `Admin Home`,

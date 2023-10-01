@@ -52,10 +52,16 @@
             </div>
           </div>
         </div>
-        <div v-if="filteredEmails.length === 0" class="col-span-3 mt-20">
+        <div v-if="filteredEmails.length === 0 && (pending === false)" class="col-span-3 mt-20">
           <div class="flex flex-col items-center">
             <UIcon name="i-heroicons-circle-stack-20-solid" class="text-gray-500 text-2xl" />
             <p class="mt-3 text-sm">No items.</p>
+          </div>
+        </div>
+        <div v-else class="col-span-3 mt-20">
+          <div class="flex flex-col items-center">
+            <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin"/>
+            <p class="mt-3 text-sm">Loading...</p>
           </div>
         </div>
       </div>
@@ -223,12 +229,11 @@
 <script setup>
 import { ref } from 'vue'
 import { string, object, email, minLength, any, } from 'valibot'
-import nuxtStorage from 'nuxt-storage'
 import checkCookie from '~/middleware/checkCookie'
 //////////////////////////
 // Set local storage value
 //////////////////////////
-nuxtStorage.localStorage.setData('activeNavLink', 'emails', 1440)
+localStorage.setItem('activeNavLink', 'emails')
 //////////////////////////
 // Fetch data
 //////////////////////////

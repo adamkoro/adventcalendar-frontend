@@ -39,7 +39,6 @@
 
 
 <script setup>
-import nuxtStorage from 'nuxt-storage';
 useHead({
     title: `Error occurred`,
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
@@ -47,7 +46,7 @@ useHead({
 
 const error = useError();
 const clearLocalData = () => {
-    nuxtStorage.localStorage.removeItem('activeNavLink')
+    localStorage.removeItem('activeNavLink')
     deleteCookie('username')
     useFetch(useRuntimeConfig().public.authUrl + '/api/auth/logout', {
         method: 'POST',
