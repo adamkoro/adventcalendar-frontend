@@ -84,6 +84,7 @@ const logout = async () => {
     }
     if (data.value.status === 'logout successful') {
         deleteCookie("username")
+        nuxtStorage.localStorage.removeItem('activeNavLink')
         navigateTo('/login',{
             replace: true,
             redirectCode: 302,

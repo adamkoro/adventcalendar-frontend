@@ -151,8 +151,7 @@
           </div>
           <template #footer>
             <div class="flex justify-between">
-              <UButton type="cancel" size="xl" label="Cancel"
-                @click="(isDeleteOpen = false); resetState()">
+              <UButton type="cancel" size="xl" label="Cancel" @click="(isDeleteOpen = false); resetState()">
                 <template #trailing>
                   <UIcon name="i-heroicons-no-symbol-20-solid" />
                 </template>
@@ -178,7 +177,7 @@ import checkCookie from '~/middleware/checkCookie';
 //////////////////////////
 // Set local storage value
 //////////////////////////
-nuxtStorage.localStorage.setData('activeNavLink', 'users')
+nuxtStorage.localStorage.setData('activeNavLink', 'users', 1440)
 //////////////////////////
 // Fetch data
 //////////////////////////

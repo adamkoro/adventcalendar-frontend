@@ -223,7 +223,7 @@ import checkCookie from '~/middleware/checkCookie'
 //////////////////////////
 // Set local storage value
 //////////////////////////
-nuxtStorage.localStorage.setData('activeNavLink', 'days')
+nuxtStorage.localStorage.setData('activeNavLink', 'days', 1440)
 //////////////////////////
 // Fetch data
 //////////////////////////

@@ -4,7 +4,7 @@
     <div>
       <div class="flex items-center justify-between p-2">
         <div class="w-1/3">
-          <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for email..."/>
+          <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for email..." />
         </div>
         <div class="">
           <UTooltip text="Update email pattern list">
@@ -228,7 +228,7 @@ import checkCookie from '~/middleware/checkCookie'
 //////////////////////////
 // Set local storage value
 //////////////////////////
-nuxtStorage.localStorage.setData('activeNavLink', 'emails')
+nuxtStorage.localStorage.setData('activeNavLink', 'emails', 1440)
 //////////////////////////
 // Fetch data
 //////////////////////////

@@ -98,7 +98,7 @@ async function login() {
 ///////////////////////////
 useHead({
     title: `Admin Login`,
-    link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
+    link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '~/assets/pictures/favicon.svg' }]
 })
 definePageMeta({
     middleware: checkCookieAtLogin
