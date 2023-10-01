@@ -46,9 +46,9 @@ useHead({
 })
 
 const error = useError();
-const clearLocalData = computed(() =>{
+const clearLocalData = () => {
     nuxtStorage.localStorage.removeItem('activeNavLink')
     deleteCookie('username')
     deleteCookie('token')
-})
+}
 </script>
