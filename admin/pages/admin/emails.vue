@@ -4,7 +4,7 @@
     <div>
       <div class="flex items-center justify-between p-2">
         <div class="w-1/3">
-          <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for email..." />
+          <UInput icon="i-heroicons-magnifying-glass-20-solid" v-model="filterInput" placeholder="Search for email..."/>
         </div>
         <div class="">
           <UTooltip text="Update email pattern list">
@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="grid grid-cols-3 gap-6 py-5 cursor-default">
-        <div v-for="email in filteredRows" :key="email.key" class="">
+        <div v-for="email in filteredEmails" :key="email.key" class="">
           <div
             class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
             <UFormGroup label="Name">
@@ -50,6 +50,12 @@
                 </UTooltip>
               </div>
             </div>
+          </div>
+        </div>
+        <div v-if="filteredEmails.length === 0" class="col-span-3 mt-20">
+          <div class="flex flex-col items-center">
+            <UIcon name="i-heroicons-circle-stack-20-solid" class="text-gray-500 text-2xl" />
+            <p class="mt-3 text-sm">No items.</p>
           </div>
         </div>
       </div>
@@ -125,35 +131,35 @@
             <UFormGroup size="lg" label="Name of the pattern" name="name"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.name" />
+              <UInput disabled v-model="editSelectedEmail.name" />
               <p>New</p>
               <UInput v-model="state.name" placeholder="Enter a pattern name..." />
             </UFormGroup>
             <UFormGroup size="lg" label="From email address" name="from"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.from" />
+              <UInput disabled v-model="editSelectedEmail.from" />
               <p>New</p>
               <UInput v-model="state.from" placeholder="Enter a from email address..." />
             </UFormGroup>
             <UFormGroup size="lg" label="To email address" name="to"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.to" />
+              <UInput disabled v-model="editSelectedEmail.to" />
               <p>New</p>
               <UInput v-model="state.to" placeholder="Enter to email address(s)..." />
             </UFormGroup>
             <UFormGroup size="lg" label="Subject of the email" name="subject"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.subject" />
+              <UInput disabled v-model="editSelectedEmail.subject" />
               <p>New</p>
               <UInput v-model="state.subject" placeholder="Enter a subject..." />
             </UFormGroup>
             <UFormGroup size="lg" label="Body of the email" name="body"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedEmail.body" />
+              <UInput disabled v-model="editSelectedEmail.body" />
               <p>New</p>
               <UTextarea v-model="state.body" placeholder="Enter a text..." autoresize />
             </UFormGroup>
@@ -213,7 +219,7 @@
     </div>
   </UContainer>
 </template>
-  
+
 <script setup>
 import { ref } from 'vue'
 import { string, object, email, minLength, any, } from 'valibot'
@@ -260,7 +266,7 @@ function resetState() {
 //////////////////////////
 // Filter data
 //////////////////////////
-const filteredRows = computed(() => {
+const filteredEmails = computed(() => {
   if (!filterInput.value) {
     return emails.value;
   }
@@ -321,7 +327,7 @@ async function updateEmail() {
   }
   const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
     method: 'PUT',
-    body: JSON.stringify({ key: editSelectedEmail.value.key,name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
+    body: JSON.stringify({ key: editSelectedEmail.value.key, name: state.value.name, from: state.value.from, to: state.value.to, subject: state.value.subject, body: state.value.body }),
     headers: useRequestHeaders(['authorization', 'cookie',]),
     credentials: 'include',
   })
