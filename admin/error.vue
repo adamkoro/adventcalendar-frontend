@@ -39,6 +39,7 @@
 
 
 <script setup>
+import nuxtStorage from 'nuxt-storage';
 useHead({
     title: `Error occurred`,
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
