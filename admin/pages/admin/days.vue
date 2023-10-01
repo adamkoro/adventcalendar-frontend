@@ -21,8 +21,8 @@
         <div v-for="day in filteredDays" :key="day.id" class="">
           <div
             class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
-            <UFormGroup label="Id">
-              <UInput :readonly="true" v-model="day.id" />
+            <UFormGroup label="Id" class="">
+              <UInput :readonly="true" v-model="day.id"/>
             </UFormGroup>
             <UFormGroup label="Year">
               <UInput :readonly="true" v-model="day.year" />
@@ -52,6 +52,12 @@
                 </UTooltip>
               </div>
             </div>
+          </div>
+        </div>
+        <div v-if="filteredDays.length === 0" class="col-span-3 mt-20">
+          <div class="flex flex-col items-center">
+            <UIcon name="i-heroicons-circle-stack-20-solid" class="text-gray-500 text-2xl" />
+            <p class="mt-3 text-sm">No items.</p>
           </div>
         </div>
       </div>
@@ -123,28 +129,28 @@
             <UFormGroup size="lg" label="Year" name="year" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
               class="pb-4" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedDay.year" />
+              <UInput disabled v-model="editSelectedDay.year" />
               <p>New</p>
               <UInput v-model="yearAsNumber" placeholder="Enter year..." />
             </UFormGroup>
             <UFormGroup size="lg" label="Day" name="to" :ui="{ label: { base: 'font-semibold text-black text-l' } }"
               class="pb-4" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedDay.day" />
+              <UInput disabled v-model="editSelectedDay.day" />
               <p>New</p>
               <UInput v-model="dayAsNumber" placeholder="Enter day..." />
             </UFormGroup>
             <UFormGroup size="lg" label="Title" name="subject"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" class="pb-4" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedDay.title" />
+              <UInput disabled v-model="editSelectedDay.title" />
               <p>New</p>
               <UInput v-model="state.title" placeholder="Enter title..." />
             </UFormGroup>
             <UFormGroup size="lg" label="Content" name="content"
               :ui="{ label: { base: 'font-semibold text-black text-l' } }" error>
               <p>Current</p>
-              <UInput :readonly="true" v-model="editSelectedDay.content" />
+              <UInput disabled v-model="editSelectedDay.content" />
               <p>New</p>
               <UTextarea v-model="state.content" placeholder="Enter text..." autoresize />
             </UFormGroup>
