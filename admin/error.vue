@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="mt-10">
-                    <UButton to="/admin/login" target="_parent" icon="i-heroicons-arrow-right-on-rectangle" size="xl" label="Return to login page" color="red" />
+                    <UButton to="/login" target="_parent" icon="i-heroicons-arrow-right-on-rectangle" size="xl" label="Return to login page" color="red" />
                 </div>
             </div>
         </div>
