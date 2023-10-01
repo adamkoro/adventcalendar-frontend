@@ -36,9 +36,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { string, object, minLength, maxLength } from 'valibot'
-import checkCookie from '~/middleware/checkCookie';
+import { ref } from 'vue';
+import { string, object, minLength, maxLength } from 'valibot';
+import checkCookieAtLogin from '~/middleware/checkCookieAtLogin';
 ///////////////////////////
 // Variables
 ///////////////////////////
@@ -101,6 +101,6 @@ useHead({
     link: [{ hid: 'icon', rel: 'icon', type: 'image/svg', href: '/favicon.svg' }]
 })
 definePageMeta({
-    middleware: checkCookie
+    middleware: checkCookieAtLogin
 })
 </script>
