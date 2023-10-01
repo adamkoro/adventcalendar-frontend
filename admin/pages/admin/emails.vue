@@ -260,13 +260,19 @@ function initialState() {
   }
 }
 const state = ref({ ...initialState })
+function reset() {
+  return initialState();
+}
 function resetState() {
-  Object.assign(state.value, { ...initialState });
+  state.value = reset();
 }
 //////////////////////////
 // Filter data
 //////////////////////////
 const filteredEmails = computed(() => {
+  if (!emails.value) {
+    return [];
+  }
   if (!filterInput.value) {
     return emails.value;
   }
@@ -307,23 +313,14 @@ async function createEmail() {
     isCreateOpen.value = false
     fetchEmails()
     toast.add({ title: 'Email successfully updated', description: state.value.name + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+    resetState()
   }
 }
 async function updateEmail() {
-  if (state.value.name === undefined) {
-    state.value.name = editSelectedEmail.value.name
-  }
-  if (state.value.from === undefined) {
-    state.value.from = editSelectedEmail.value.from
-  }
-  if (state.value.to === undefined) {
-    state.value.to = editSelectedEmail.value.to
-  }
-  if (state.value.subject === undefined) {
-    state.value.subject = editSelectedEmail.value.subject
-  }
-  if (state.value.body === undefined) {
-    state.value.body = editSelectedEmail.value.body
+  for (let key in state.value) {
+    if (state.value[key] === undefined) {
+      state.value[key] = editSelectedEmail.value[key];
+    }
   }
   const { data, error } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
     method: 'PUT',
@@ -338,6 +335,8 @@ async function updateEmail() {
     isEditOpen.value = false
     fetchEmails()
     toast.add({ title: 'Email successfully updated', description: editSelectedEmail.value.name + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
+    resetState()
+    editSelectedEmail.value = ''
   }
 }
 async function deleteEmail() {
@@ -353,8 +352,9 @@ async function deleteEmail() {
     return
   }
   isDeleteOpen.value = false
-  toast.add({ title: 'Email successfully deleted', description: deleteSelectedEmail.value + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
   fetchEmails()
+  toast.add({ title: 'Email successfully deleted', description: deleteSelectedEmail.value + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+  resetState()
   deleteSelectedEmail.value = ''
 }
 //////////////////////////

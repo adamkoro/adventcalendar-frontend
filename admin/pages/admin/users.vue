@@ -40,7 +40,7 @@
                 Create user
               </h3>
               <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
-                @click="(isCreateOpen = false) && resetState()" />
+                @click="(isCreateOpen = false)" />
             </div>
           </template>
           <UForm :schema="createUserSchema" :state="state" @submit="createUser">
@@ -126,7 +126,7 @@
       <!-------------------------->
       <!-- Delete user pattern --->
       <!-------------------------->
-      <UModal v-model="isDeleteOpen">
+      <UModal v-model="isDeleteOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
             <div class="flex items-center justify-between ">
@@ -134,7 +134,7 @@
                 Delete user
               </h3>
               <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
-                @click="(isDeleteOpen = false) && (deleteSelectedUser = '')" />
+                @click="(isDeleteOpen = false); resetState()" />
             </div>
           </template>
           <div v-if="deleteSelectedUser" class="flex flex-wrap gap-1">
@@ -152,7 +152,7 @@
           <template #footer>
             <div class="flex justify-between">
               <UButton type="cancel" size="xl" label="Cancel"
-                @click="(isDeleteOpen = false) && (deleteSelectedUser = '')">
+                @click="(isDeleteOpen = false); resetState()">
                 <template #trailing>
                   <UIcon name="i-heroicons-no-symbol-20-solid" />
                 </template>
@@ -198,8 +198,14 @@ function initialState() {
   }
 }
 const state = ref({ ...initialState })
+function reset() {
+  return initialState();
+}
 function resetState() {
-  Object.assign(state.value, { ...initialState });
+  state.value = reset();
+  deleteSelectedUser.value = null
+  editSelectedUser.value = null
+  selected.value = [users[0]]
 }
 //////////////////////////
 // Variables
@@ -252,6 +258,9 @@ function select(row) {
 // Filter functions
 //////////////////////////
 const filteredRows = computed(() => {
+  if (!users.value) {
+    return []
+  }
   if (!filterInput.value) {
     return users.value
   }
@@ -286,6 +295,7 @@ async function createUser() {
     isCreateOpen.value = false
     fetchUsers()
     toast.add({ title: 'User successfully created', description: state.value.username + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+    resetState()
   }
 }
 async function updateUser() {
@@ -308,6 +318,7 @@ async function updateUser() {
     isEditOpen.value = false
     fetchUsers()
     toast.add({ title: 'User successfully updated', description: editSelectedUser.value.username + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
+    resetState()
   }
 }
 async function deleteUser() {
@@ -327,6 +338,7 @@ async function deleteUser() {
     }
     isDeleteOpen.value = false
     fetchUsers()
+    resetState()
   }
   else {
     const { data, error } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/user', {

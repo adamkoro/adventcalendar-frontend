@@ -22,7 +22,7 @@
           <div
             class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
             <UFormGroup label="Id" class="">
-              <UInput :readonly="true" v-model="day.id"/>
+              <UInput :readonly="true" v-model="day.id" />
             </UFormGroup>
             <UFormGroup label="Year">
               <UInput :readonly="true" v-model="day.year" />
@@ -254,13 +254,19 @@ function initialState() {
   }
 }
 const state = ref({ ...initialState })
+function reset() {
+  return initialState();
+}
 function resetState() {
-  Object.assign(state.value, { ...initialState });
+  state.value = reset();
 }
 //////////////////////////
 // Filter data
 //////////////////////////
 const filteredDays = computed(() => {
+  if (!days.value) {
+    return [];
+  }
   if (!filterInput.value) {
     return days.value;
   }
@@ -314,6 +320,7 @@ async function createDay() {
     isCreateOpen.value = false
     fetchDays()
     toast.add({ title: 'Day successfully created', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' created', icon: 'i-heroicons-check-circle-20-solid' })
+    resetState()
   }
 }
 async function updateDay() {
@@ -349,20 +356,15 @@ async function updateDay() {
     isEditOpen.value = false
     fetchDays()
     toast.add({ title: 'Day successfully updated', description: 'Year: ' + localYear.value + ' day: ' + localDay.value + ' id: ' + editSelectedDay.value.id + ' updated', icon: 'i-heroicons-check-circle-20-solid' })
+    resetState()
+    editSelectedDay.value = ''
   }
 }
 async function deleteDay() {
-  if (state.value.year === undefined) {
-    state.value.year = deleteSelectedDay.value.year
-  }
-  if (state.value.day === undefined) {
-    state.value.day = deleteSelectedDay.value.day
-  }
-  if (state.value.title === undefined) {
-    state.value.title = deleteSelectedDay.value.title
-  }
-  if (state.value.content === undefined) {
-    state.value.content = deleteSelectedDay.value.content
+  for (let key in state.value) {
+    if (state.value[key] === undefined) {
+      state.value[key] = deleteSelectedDay.value[key];
+    }
   }
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
     method: 'DELETE',
@@ -378,6 +380,7 @@ async function deleteDay() {
     isDeleteOpen.value = false
     fetchDays()
     toast.add({ title: 'Day successfully deleted', description: 'Year: ' + state.value.year + ' day: ' + state.value.day + ' title: ' + state.value.title + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+    resetState()
     deleteSelectedDay.value = ''
   }
 }
