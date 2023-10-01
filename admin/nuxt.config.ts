@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   app: {
     baseURL: '/admin/',
     buildAssetsDir: '/admin-assets/',
+    head: {
+      link: [{rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]
+    }
   },
   runtimeConfig: {
     public: {

@@ -14,7 +14,6 @@ nuxtStorage.localStorage.setData('activeNavLink', 'home', 1440)
 
 useHead({
     title: `Admin Home`,
-    link: [{rel: 'icon', type: 'image/svg+xml', href: '/admin-assets/assets/images/geeko.svg' }]
 })
 definePageMeta({
     middleware: checkCookie

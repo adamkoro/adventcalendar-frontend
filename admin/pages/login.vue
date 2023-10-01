@@ -98,7 +98,6 @@ async function login() {
 ///////////////////////////
 useHead({
     title: `Admin Login`,
-    link: [{rel: 'icon', type: 'image/svg+xml', href: '/admin-assets/assets/images/geeko.svg' }]
 })
 definePageMeta({
     middleware: checkCookieAtLogin

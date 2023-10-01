@@ -389,7 +389,6 @@ async function deleteDay() {
 //////////////////////////
 useHead({
   title: `Days Management`,
-  link: [{rel: 'icon', type: 'image/svg+xml', href: '/admin-assets/assets/images/geeko.svg' }]
 })
 definePageMeta({
   middleware: checkCookie,

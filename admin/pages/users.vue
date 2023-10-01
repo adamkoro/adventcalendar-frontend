@@ -360,7 +360,6 @@ async function deleteUser() {
 //////////////////////////
 useHead({
   title: `User Management`,
-  link: [{rel: 'icon', type: 'image/svg+xml', href: '/admin-assets/assets/images/geeko.svg' }]
 })
 definePageMeta({
   middleware: checkCookie
