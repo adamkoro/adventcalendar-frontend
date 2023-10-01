@@ -4,7 +4,7 @@
         <!-- logo -->
         <h1 class="w-1/3">
             <div class="flex items-center gap-1 cursor-pointer">
-                <img src="~/assets/pictures/geeko.svg" class="h-6" />
+                <img src="~/assets/images/geeko.svg" class="h-6" />
                 <NuxtLink to="/home" class="text-l font-semibold ">AdventCalendar Admin Center</NuxtLink>
             </div>
         </h1>
