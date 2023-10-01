@@ -6,7 +6,8 @@
                     <ErrorHeader />
                 </div>
                 <div class="mt-10 flex flex-col">
-                    <label class="border-2 border-red-500 rounded-lg font-semibold p-3 bg-red-500 text-white text-xl">Error Status Code</label>
+                    <label class="border-2 border-red-500 rounded-lg font-semibold p-3 bg-red-500 text-white text-xl">Error
+                        Status Code</label>
                 </div>
                 <div class="flex flex-col mb-10">
                     <div class="text-center mt-5 border-2 border-red-500 rounded-lg text-lg font-semibold mx-10 py-2 px-10">
@@ -14,7 +15,8 @@
                     </div>
                 </div>
                 <div class="flex flex-col text-center">
-                    <label class="border-2 border-red-500 rounded-lg font-semibold p-3 bg-red-500 text-white text-xl">Error Message</label>
+                    <label class="border-2 border-red-500 rounded-lg font-semibold p-3 bg-red-500 text-white text-xl">Error
+                        Message</label>
                 </div>
                 <div class="flex flex-col text-center">
                     <div class="text-center mt-5 border-2 border-red-500 rounded-lg text-lg font-semibold p-2">
@@ -22,7 +24,13 @@
                     </div>
                 </div>
                 <div class="mt-10">
-                    <UButton to="/admin/login" target="_parent" icon="i-heroicons-arrow-right-on-rectangle" size="xl" label="Return to login page" color="red" />
+                    <UButton to="/admin/login" target="_parent" icon="i-heroicons-arrow-right-on-rectangle" size="xl"
+                        label="Return to login page" color="red" />
+                </div>
+                <div class="mt-20">
+                    <UTooltip text="Clear page data, such as localstorage and cookies.">
+                        <UButton icon="i-heroicons-trash" size="xl" label="Clear local data" color="red" @click="clearLocalData" />
+                    </UTooltip>
                 </div>
             </div>
         </div>
@@ -37,5 +45,9 @@ useHead({
 })
 
 const error = useError();
-
+const clearLocalData = computed(() =>{
+    nuxtStorage.localStorage.removeItem('activeNavLink')
+    deleteCookie('username')
+    deleteCookie('token')
+})
 </script>
