@@ -172,12 +172,11 @@
 <script setup>
 import { ref } from 'vue'
 import { string, object, email, minLength, maxLength } from 'valibot'
-import nuxtStorage from 'nuxt-storage'
 import checkCookie from '~/middleware/checkCookie';
 //////////////////////////
 // Set local storage value
 //////////////////////////
-nuxtStorage.localStorage.setData('activeNavLink', 'users', 1440)
+localStorage.setItem('activeNavLink', 'users')
 //////////////////////////
 // Fetch data
 //////////////////////////

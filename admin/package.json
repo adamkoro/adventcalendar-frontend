@@ -23,7 +23,6 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.17.0",
     "nuxt": "^3.7.4",
-    "nuxt-storage": "^1.2.2",
     "typescript": "^5.2.2",
     "valibot": "^0.17.1"
   },
