@@ -42,11 +42,11 @@
               <div class="flex">
               </div>
               <div class="w-1/3 flex justify-end gap-1 pt-2">
-                <UTooltip text="Edit email pattern">
+                <UTooltip text="Edit day pattern">
                   <UButton icon="i-heroicons-pencil-square-20-solid"
                     @click="(isEditOpen = true) && (editSelectedDay = day)" />
                 </UTooltip>
-                <UTooltip text="Delete email pattern">
+                <UTooltip text="Delete day pattern">
                   <UButton icon="i-heroicons-trash-20-solid"
                     @click="(isDeleteOpen = true) && (deleteSelectedDay = day)" />
                 </UTooltip>
@@ -312,7 +312,7 @@ async function createDay() {
   }
   if (data.value) {
     isCreateOpen.value = false
-    fetchEmails()
+    fetchDays()
     toast.add({ title: 'Day successfully created', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' created', icon: 'i-heroicons-check-circle-20-solid' })
   }
 }
@@ -352,6 +352,18 @@ async function updateDay() {
   }
 }
 async function deleteDay() {
+  if (state.value.year === undefined) {
+    state.value.year = deleteSelectedDay.value.year
+  }
+  if (state.value.day === undefined) {
+    state.value.day = deleteSelectedDay.value.day
+  }
+  if (state.value.title === undefined) {
+    state.value.title = deleteSelectedDay.value.title
+  }
+  if (state.value.content === undefined) {
+    state.value.content = deleteSelectedDay.value.content
+  }
   const { data, error } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/admin/public/day', {
     method: 'DELETE',
     body: JSON.stringify({ id: deleteSelectedDay.value.id }),
@@ -365,7 +377,7 @@ async function deleteDay() {
   if (data.value) {
     isDeleteOpen.value = false
     fetchDays()
-    toast.add({ title: 'Day successfully deleted', description: 'Year: ' + yearAsNumber.value + ' day: ' + dayAsNumber.value + ' title: ' + state.value.title + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
+    toast.add({ title: 'Day successfully deleted', description: 'Year: ' + state.value.year + ' day: ' + state.value.day + ' title: ' + state.value.title + ' deleted', icon: 'i-heroicons-check-circle-20-solid' })
     deleteSelectedDay.value = ''
   }
 }
