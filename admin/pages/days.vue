@@ -60,7 +60,7 @@
             <p class="mt-3 text-sm">No items.</p>
           </div>
         </div>
-        <div v-else class="col-span-3 mt-20">
+        <div v-if="pending" class="col-span-3 mt-20">
           <div class="flex flex-col items-center">
             <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin"/>
             <p class="mt-3 text-sm">Loading...</p>
