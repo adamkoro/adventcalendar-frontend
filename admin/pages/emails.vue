@@ -18,36 +18,38 @@
         </div>
       </div>
       <div class="grid grid-cols-3 gap-6 py-5 cursor-default">
-        <div v-for="email in filteredEmails" :key="email.key" class="">
-          <div
-            class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
-            <UFormGroup label="Name">
-              <UInput :readonly="true" v-model="email.name" />
-            </UFormGroup>
-            <UFormGroup label="From">
-              <UInput :readonly="true" v-model="email.from" />
-            </UFormGroup>
-            <UFormGroup label="To">
-              <UInput :readonly="true" v-model="email.to" />
-            </UFormGroup>
-            <UFormGroup label="Subject">
-              <UInput :readonly="true" v-model="email.subject" />
-            </UFormGroup>
-            <UFormGroup label="Body">
-              <UInput :readonly="true" v-model="email.body" />
-            </UFormGroup>
-            <div class="flex items-center justify-between pb-1">
-              <div class="w-1/3"></div>
-              <div class="flex"></div>
-              <div class="w-1/3 flex justify-end gap-1 pt-2">
-                <UTooltip text="Edit email pattern">
-                  <UButton icon="i-heroicons-pencil-square-20-solid"
-                    @click="(isEditOpen = true) && (editSelectedEmail = email)" />
-                </UTooltip>
-                <UTooltip text="Delete email pattern">
-                  <UButton icon="i-heroicons-trash-20-solid"
-                    @click="(isDeleteOpen = true) && (deleteSelectedEmail = email.name)" />
-                </UTooltip>
+        <div v-if="pending === false">
+          <div v-for="email in filteredEmails" :key="email.key" class="">
+            <div
+              class="bg-gray-300 dark:bg-slate-800 text-black dark:text-white rounded border-2 border-orange-500 p-1 shadow-lg">
+              <UFormGroup label="Name">
+                <UInput :readonly="true" v-model="email.name" />
+              </UFormGroup>
+              <UFormGroup label="From">
+                <UInput :readonly="true" v-model="email.from" />
+              </UFormGroup>
+              <UFormGroup label="To">
+                <UInput :readonly="true" v-model="email.to" />
+              </UFormGroup>
+              <UFormGroup label="Subject">
+                <UInput :readonly="true" v-model="email.subject" />
+              </UFormGroup>
+              <UFormGroup label="Body">
+                <UInput :readonly="true" v-model="email.body" />
+              </UFormGroup>
+              <div class="flex items-center justify-between pb-1">
+                <div class="w-1/3"></div>
+                <div class="flex"></div>
+                <div class="w-1/3 flex justify-end gap-1 pt-2">
+                  <UTooltip text="Edit email pattern">
+                    <UButton icon="i-heroicons-pencil-square-20-solid"
+                      @click="(isEditOpen = true) && (editSelectedEmail = email)" />
+                  </UTooltip>
+                  <UTooltip text="Delete email pattern">
+                    <UButton icon="i-heroicons-trash-20-solid"
+                      @click="(isDeleteOpen = true) && (deleteSelectedEmail = email.name)" />
+                  </UTooltip>
+                </div>
               </div>
             </div>
           </div>
@@ -60,7 +62,7 @@
         </div>
         <div v-if="pending" class="col-span-3 mt-20">
           <div class="flex flex-col items-center">
-            <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin"/>
+            <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin" />
             <p class="mt-3 text-sm">Loading...</p>
           </div>
         </div>
