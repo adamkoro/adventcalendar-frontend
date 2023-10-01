@@ -49,6 +49,10 @@ const error = useError();
 const clearLocalData = () => {
     nuxtStorage.localStorage.removeItem('activeNavLink')
     deleteCookie('username')
-    deleteCookie('token')
+    useFetch(useRuntimeConfig().public.authUrl + '/api/auth/logout', {
+        method: 'POST',
+        headers: useRequestHeaders(['authorization', 'cookie',]),
+        credentials: 'include',
+    })
 }
 </script>
