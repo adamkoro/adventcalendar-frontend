@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: admin-frontend-configmap
+  labels:
+    app: admin-frontend
+data:
+  NUXT_PUBLIC_API_URL: "http://adventcalendar.adamkoro.local"
+  NUXT_PUBLIC_MAIL_URL: "http://adventcalendar.adamkoro.local"
+  NUXT_PUBLIC_AUTH_URL: "http://adventcalendar.adamkoro.local"
+  NUXT_PUBLIC_PUBLIC_URL: "http://adventcalendar.adamkoro.local"

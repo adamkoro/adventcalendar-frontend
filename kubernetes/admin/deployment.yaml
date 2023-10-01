@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  admin-frontend
+spec:
+  replicas:  1
+  selector:
+    matchLabels:
+      app:  admin-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  admin-frontend
+    spec:
+      restartPolicy: Always
+      containers:
+      - image:  registry.adamkoro.com/adventcalendar/frontend/admin:latest
+        imagePullPolicy: Always
+        name:  admin-frontend
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "120M"
+          #limits:
+          #  cpu: "2000m"
+          #  memory: "200M"
+        livenessProbe:
+          httpGet:
+            path: /admin/login
+            port: http
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /admin/login
+            port: http
+          initialDelaySeconds: 5
+          timeoutSeconds: 5     
+        ports:
+        - containerPort: 3000
+          name:  http
+          protocol: TCP
+        env:
+        - name: LOG_LEVEL
+          value:  "info"
+        envFrom:
+          - configMapRef:
+              name:  admin-frontend-configmap
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 10000
