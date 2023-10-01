@@ -5,52 +5,52 @@
         <h1 class="w-1/3">
             <div class="flex items-center gap-1 cursor-pointer">
                 <img src="~/assets/pictures/geeko.svg" class="h-6" />
-                <NuxtLink to="/admin/home" class="text-l font-semibold ">AdventCalendar Admin Center</NuxtLink>
+                <NuxtLink to="/home" class="text-l font-semibold ">AdventCalendar Admin Center</NuxtLink>
             </div>
         </h1>
         <nav class="nav font-semibold">
             <ul class="flex items-center">
                 <div v-if="activeNavLink == 'home'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/home" >Home</NuxtLink>
+                        <NuxtLink to="/home" >Home</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                        <NuxtLink to="/admin/home" >Home</NuxtLink>
+                        <NuxtLink to="/home" >Home</NuxtLink>
                     </li>
                 </div>
                 <div v-if="activeNavLink == 'days'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/days" >Days</NuxtLink>
+                        <NuxtLink to="days" >Days</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                 <li
                     class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/days" >Days</NuxtLink>
+                    <NuxtLink to="/days" >Days</NuxtLink>
                 </li>
                 </div>
                 <div v-if="activeNavLink == 'users'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/users" >Users</NuxtLink>
+                        <NuxtLink to="/users" >Users</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                 <li
                     class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/users" >Users</NuxtLink>
+                    <NuxtLink to="/users" >Users</NuxtLink>
                 </li>
                 </div>
                 <div v-if="activeNavLink == 'emails'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/admin/emails" >Emails</NuxtLink>
+                        <NuxtLink to="/emails" >Emails</NuxtLink>
                     </li>
                 </div>
                 <div v-else >
                 <li
                     class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/admin/emails" >Emails</NuxtLink>
+                    <NuxtLink to="/emails" >Emails</NuxtLink>
                 </li>
                 </div>
             </ul>
@@ -84,7 +84,7 @@ const logout = async () => {
     }
     if (data.value.status === 'logout successful') {
         deleteCookie("username")
-        navigateTo('/admin/login',{
+        navigateTo('/login',{
             replace: true,
             redirectCode: 302,
             external: false,

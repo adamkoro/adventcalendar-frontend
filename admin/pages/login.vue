@@ -86,7 +86,7 @@ async function login() {
     const responseData = data.value
     if (responseData.status == 'login successful') {
         setCookie("username", state.value.username)
-        router.push('/admin/home')
+        router.push('/home')
         toast.add({ title: 'Login successful', description: 'You have been logged in successfully as ' + state.value.username, icon: 'i-heroicons-check-circle-20-solid' })
     }
     else {

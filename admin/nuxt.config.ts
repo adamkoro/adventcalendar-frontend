@@ -2,6 +2,9 @@
 export default defineNuxtConfig({
   devtools: { enabled: true, },
   modules: ['@nuxt/ui'],
+  app: {
+    baseURL: '/admin/',
+  },
   runtimeConfig: {
     public: {
       apiUrl: 'http://localhost:8080',
