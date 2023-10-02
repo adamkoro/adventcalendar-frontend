@@ -56,16 +56,20 @@
             </div>
           </div>
         </div>
-        <div v-if="filteredDays.length === 0 && (pending === false)" class="col-span-3 mt-20">
-          <div class="flex flex-col items-center">
-            <UIcon name="i-heroicons-circle-stack-20-solid" class="text-gray-500 text-2xl" />
-            <p class="mt-3 text-sm">No items.</p>
+        <div class="col-span-3 mt-20">
+          <div v-if="pending">
+            <div class="flex flex-col items-center mt-6">
+              <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin" />
+              <p class="mt-3 text-sm">Loading...</p>
+            </div>
           </div>
-        </div>
-        <div v-if="pending" class="col-span-3 mt-20">
-          <div class="flex flex-col items-center">
-            <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin" />
-            <p class="mt-3 text-sm">Loading...</p>
+          <div v-else>
+            <div v-if="filteredDays.length === 0">
+              <div class="flex flex-col items-center">
+                <UIcon name="i-heroicons-circle-stack-20-solid" class="text-gray-500 text-2xl" />
+                <p class="mt-3 text-sm">No items.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -228,20 +232,6 @@ import { ref } from 'vue'
 import { string, object, minLength, number, maxLength, minValue, maxValue, value, any } from 'valibot'
 import checkCookie from '~/middleware/checkCookie'
 //////////////////////////
-// Set local storage value
-//////////////////////////
-onBeforeMount(() => {
-  localStorage.setItem('activeNavLink', 'days')
-})
-//////////////////////////
-// Fetch data
-//////////////////////////
-const { data: days, error, pending, refresh: fetchDays } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
-  method: 'GET',
-  headers: useRequestHeaders(['authorization', 'cookie']),
-  credentials: 'include',
-})
-//////////////////////////
 // Variables
 //////////////////////////
 const filterInput = ref('')
@@ -252,6 +242,24 @@ const deleteSelectedDay = ref(any())
 const editSelectedDay = ref(any())
 const toast = useToast()
 //////////////////////////
+//////////////////////////
+// Set local storage value
+//////////////////////////
+onBeforeMount(() => {
+  localStorage.setItem('activeNavLink', 'days')
+})
+//////////////////////////
+// Fetch data
+//////////////////////////
+const { data: days, error: fetchError, pending, refresh: fetchDays } = await useFetch(useRuntimeConfig().public.publicUrl + '/api/public/days', {
+  method: 'GET',
+  headers: useRequestHeaders(['authorization', 'cookie']),
+  credentials: 'include',
+  lazy: true,
+})
+if (fetchError.value) {
+  toast.add({ title: 'Days fetch error', description: 'Could not fetch requested data', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
+}
 // Day state
 //////////////////////////
 function initialState() {

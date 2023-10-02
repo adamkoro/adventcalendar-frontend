@@ -54,16 +54,20 @@
             </div>
           </div>
         </div>
-        <div v-if="filteredEmails.length === 0 && (pending === false)" class="col-span-3 mt-20">
-          <div class="flex flex-col items-center">
-            <UIcon name="i-heroicons-circle-stack-20-solid" class="text-gray-500 text-2xl" />
-            <p class="mt-3 text-sm">No items.</p>
+        <div class="col-span-3 mt-20">
+          <div v-if="pending">
+            <div class="flex flex-col items-center mt-6">
+              <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin" />
+              <p class="mt-3 text-sm">Loading...</p>
+            </div>
           </div>
-        </div>
-        <div v-if="pending" class="col-span-3 mt-20">
-          <div class="flex flex-col items-center">
-            <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin" />
-            <p class="mt-3 text-sm">Loading...</p>
+          <div v-else>
+            <div v-if="filteredEmails.length === 0">
+              <div class="flex flex-col items-center">
+                <UIcon name="i-heroicons-circle-stack-20-solid" class="text-gray-500 text-2xl" />
+                <p class="mt-3 text-sm">No items.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
