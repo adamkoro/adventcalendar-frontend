@@ -242,7 +242,6 @@ const deleteSelectedDay = ref(any())
 const editSelectedDay = ref(any())
 const toast = useToast()
 //////////////////////////
-//////////////////////////
 // Set local storage value
 //////////////////////////
 onBeforeMount(() => {
@@ -260,6 +259,7 @@ const { data: days, error: fetchError, pending, refresh: fetchDays } = await use
 if (fetchError.value) {
   toast.add({ title: 'Days fetch error', description: 'Could not fetch requested data', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
 }
+//////////////////////////
 // Day state
 //////////////////////////
 function initialState() {
