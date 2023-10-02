@@ -180,7 +180,6 @@ const filterInput = ref('')
 const isEditOpen = ref(false)
 const isCreateOpen = ref(false)
 const isDeleteOpen = ref(false)
-const selected = ref([users[0]])
 const deleteSelectedUser = ref('')
 const editSelectedUser = ref('')
 const toast = useToast()
@@ -202,6 +201,10 @@ const { data: users, error: fetchError, pending, refresh: fetchUsers } = await u
 if (fetchError.value) {
   toast.add({ title: 'Users fetch error', description: 'Could not fetch requested data', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
 }
+//////////////////////////
+// Selected rows
+//////////////////////////
+const selected = ref([users[0]])
 //////////////////////////
 // User state
 //////////////////////////
