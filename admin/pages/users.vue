@@ -174,6 +174,17 @@ import { ref } from 'vue'
 import { string, object, email, minLength, maxLength } from 'valibot'
 import checkCookie from '~/middleware/checkCookie';
 //////////////////////////
+// Variables
+//////////////////////////
+const filterInput = ref('')
+const isEditOpen = ref(false)
+const isCreateOpen = ref(false)
+const isDeleteOpen = ref(false)
+const selected = ref([users[0]])
+const deleteSelectedUser = ref('')
+const editSelectedUser = ref('')
+const toast = useToast()
+//////////////////////////
 // Set local storage value
 //////////////////////////
 onBeforeMount(() => {
@@ -182,11 +193,14 @@ onBeforeMount(() => {
 //////////////////////////
 // Fetch data
 //////////////////////////
-const { data: users, error, pending, refresh: fetchUsers } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
+const { data: users, error: fetchError, pending, refresh: fetchUsers } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
 })
+if (fetchError.value) {
+  toast.add({ title: 'Users fetch error', description: 'Could not fetch requested data', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
+}
 //////////////////////////
 // User state
 //////////////////////////
@@ -207,17 +221,6 @@ function resetState() {
   editSelectedUser.value = null
   selected.value = [users[0]]
 }
-//////////////////////////
-// Variables
-//////////////////////////
-const filterInput = ref('')
-const isEditOpen = ref(false)
-const isCreateOpen = ref(false)
-const isDeleteOpen = ref(false)
-const selected = ref([users[0]])
-const deleteSelectedUser = ref('')
-const editSelectedUser = ref('')
-const toast = useToast()
 //////////////////////////
 // Table columns
 //////////////////////////

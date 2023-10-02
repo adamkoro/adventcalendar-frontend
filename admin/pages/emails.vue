@@ -237,20 +237,6 @@ import { ref } from 'vue'
 import { string, object, email, minLength, any, } from 'valibot'
 import checkCookie from '~/middleware/checkCookie'
 //////////////////////////
-// Set local storage value
-//////////////////////////
-onBeforeMount(() => {
-  localStorage.setItem('activeNavLink', 'emails')
-})
-//////////////////////////
-// Fetch data
-//////////////////////////
-const { data: emails, error, pending, refresh: fetchEmails } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
-  method: 'GET',
-  headers: useRequestHeaders(['authorization', 'cookie']),
-  credentials: 'include',
-})
-//////////////////////////
 // Variables
 //////////////////////////
 const filterInput = ref('')
@@ -260,6 +246,23 @@ const isDeleteOpen = ref(false)
 const deleteSelectedEmail = ref('')
 const editSelectedEmail = ref(any())
 const toast = useToast()
+//////////////////////////
+// Set local storage value
+//////////////////////////
+onBeforeMount(() => {
+  localStorage.setItem('activeNavLink', 'emails')
+})
+//////////////////////////
+// Fetch data
+//////////////////////////
+const { data: emails, error: fetchError, pending, refresh: fetchEmails } = await useFetch(useRuntimeConfig().public.mailUrl + '/api/admin/emailmanage/email', {
+  method: 'GET',
+  headers: useRequestHeaders(['authorization', 'cookie']),
+  credentials: 'include',
+})
+if (fetchError.value) {
+  toast.add({ title: 'Emails fetch error', description: 'Could not fetch requested data', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
+}
 //////////////////////////
 // Email state
 //////////////////////////
