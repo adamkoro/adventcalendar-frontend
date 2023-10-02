@@ -29,7 +29,8 @@
                 </div>
                 <div class="mt-20">
                     <UTooltip text="Clear page data, such as localstorage and cookies.">
-                        <UButton icon="i-heroicons-trash" size="xl" label="Clear local data" color="red" @click="clearLocalData" />
+                        <UButton icon="i-heroicons-trash" size="xl" label="Clear local data" color="red"
+                            @click="clearLocalData" />
                     </UTooltip>
                 </div>
             </div>
@@ -53,5 +54,6 @@ const clearLocalData = () => {
         headers: useRequestHeaders(['authorization', 'cookie',]),
         credentials: 'include',
     })
+
 }
 </script>

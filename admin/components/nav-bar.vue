@@ -12,46 +12,47 @@
             <ul class="flex items-center">
                 <div v-if="activeNavLink == 'home'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/home" >Home</NuxtLink>
+                        <NuxtLink to="/home">Home</NuxtLink>
                     </li>
                 </div>
-                <div v-else >
-                    <li class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                        <NuxtLink to="/home" >Home</NuxtLink>
+                <div v-else>
+                    <li
+                        class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                        <NuxtLink to="/home">Home</NuxtLink>
                     </li>
                 </div>
                 <div v-if="activeNavLink == 'days'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="days" >Days</NuxtLink>
+                        <NuxtLink to="days">Days</NuxtLink>
                     </li>
                 </div>
-                <div v-else >
-                <li
-                    class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/days" >Days</NuxtLink>
-                </li>
+                <div v-else>
+                    <li
+                        class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                        <NuxtLink to="/days">Days</NuxtLink>
+                    </li>
                 </div>
                 <div v-if="activeNavLink == 'users'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/users" >Users</NuxtLink>
+                        <NuxtLink to="/users">Users</NuxtLink>
                     </li>
                 </div>
-                <div v-else >
-                <li
-                    class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/users" >Users</NuxtLink>
-                </li>
+                <div v-else>
+                    <li
+                        class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                        <NuxtLink to="/users">Users</NuxtLink>
+                    </li>
                 </div>
                 <div v-if="activeNavLink == 'emails'">
                     <li class="p-4 border-b-2 border-primary-500 border-opacity-100 text-primary-500 cursor-pointer">
-                        <NuxtLink to="/emails" >Emails</NuxtLink>
+                        <NuxtLink to="/emails">Emails</NuxtLink>
                     </li>
                 </div>
-                <div v-else >
-                <li
-                    class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
-                    <NuxtLink to="/emails" >Emails</NuxtLink>
-                </li>
+                <div v-else>
+                    <li
+                        class="p-4 border-b-2 border-primary-500 border-opacity-0 hover:border-opacity-100 hover:text-primary-500 duration-200 cursor-pointer">
+                        <NuxtLink to="/emails">Emails</NuxtLink>
+                    </li>
                 </div>
             </ul>
         </nav>
@@ -69,7 +70,10 @@
     </header>
 </template>
 <script setup>
-const activeNavLink = localStorage.getItem('activeNavLink')
+const activeNavLink = ref(null)
+onMounted(() => {
+    activeNavLink.value = localStorage.getItem('activeNavLink')
+})
 const username = useCookie('username')
 const logout = async () => {
     const { data, error } = await useFetch(useRuntimeConfig().public.authUrl + '/api/auth/logout', {
@@ -84,7 +88,7 @@ const logout = async () => {
     if (data.value.status === 'logout successful') {
         deleteCookie("username")
         nuxtStorage.localStorage.removeItem('activeNavLink')
-        navigateTo('/login',{
+        navigateTo('/login', {
             replace: true,
             redirectCode: 302,
             external: false,

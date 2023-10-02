@@ -9,7 +9,9 @@
 <script setup>
 import checkCookie from '~/middleware/checkCookie'
 
-localStorage.setItem('activeNavLink', 'home')
+onBeforeMount(() => {
+    localStorage.setItem('activeNavLink', 'home')
+})
 
 useHead({
     title: `Admin Home`,

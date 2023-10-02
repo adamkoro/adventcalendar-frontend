@@ -176,7 +176,9 @@ import checkCookie from '~/middleware/checkCookie';
 //////////////////////////
 // Set local storage value
 //////////////////////////
-localStorage.setItem('activeNavLink', 'users')
+onBeforeMount(() => {
+  localStorage.setItem('activeNavLink', 'users')
+})
 //////////////////////////
 // Fetch data
 //////////////////////////

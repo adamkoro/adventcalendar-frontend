@@ -235,7 +235,9 @@ import checkCookie from '~/middleware/checkCookie'
 //////////////////////////
 // Set local storage value
 //////////////////////////
-localStorage.setItem('activeNavLink', 'emails')
+onBeforeMount(() => {
+  localStorage.setItem('activeNavLink', 'emails')
+})
 //////////////////////////
 // Fetch data
 //////////////////////////
