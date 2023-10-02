@@ -197,6 +197,7 @@ const { data: users, error: fetchError, pending, refresh: fetchUsers } = await u
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
+  lazy: true,
 })
 if (fetchError.value) {
   toast.add({ title: 'Users fetch error', description: 'Could not fetch requested data', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })

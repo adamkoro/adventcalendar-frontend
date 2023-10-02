@@ -259,6 +259,7 @@ const { data: emails, error: fetchError, pending, refresh: fetchEmails } = await
   method: 'GET',
   headers: useRequestHeaders(['authorization', 'cookie']),
   credentials: 'include',
+  lazy: true,
 })
 if (fetchError.value) {
   toast.add({ title: 'Emails fetch error', description: 'Could not fetch requested data', icon: 'i-heroicons-no-symbol-20-solid', color: 'red' })
