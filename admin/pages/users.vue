@@ -171,7 +171,7 @@
   
 <script setup>
 import { ref } from 'vue'
-import { string, object, email, minLength, maxLength } from 'valibot'
+import { string, object, email, minLength, maxLength, nullable } from 'valibot'
 import checkCookie from '~/middleware/checkCookie';
 //////////////////////////
 // Variables
@@ -183,13 +183,7 @@ const isDeleteOpen = ref(false)
 const deleteSelectedUser = ref('')
 const editSelectedUser = ref('')
 const toast = useToast()
-//////////////////////////
-// Set local storage value
-//////////////////////////
-onBeforeMount(() => {
-  localStorage.setItem('activeNavLink', 'users')
-})
-//////////////////////////
+///////////////////////////
 // Fetch data
 //////////////////////////
 const { data: users, error: fetchError, pending, refresh: fetchUsers } = await useFetch(useRuntimeConfig().public.apiUrl + '/api/admin/usermanage/users', {
@@ -281,7 +275,7 @@ const filteredRows = computed(() => {
 // Validation schemas
 //////////////////////////
 const createUserSchema = object({
-  username: string([minLength(1, 'Minimum 1 character'), maxLength(32, 'Maximum 32 characters')]),
+  username: string([minLength(1, 'Minimum 1 character'), maxLength(32, 'Maximum 32 characters'),]),
   email: string([email(1, 'Invalid email')]),
   password: string([minLength(4, 'Minimum 4 characters')]),
 })

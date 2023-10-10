@@ -54,7 +54,7 @@
             </div>
           </div>
         </div>
-        <div class="col-span-3 mt-20">
+        <div class="col-span-3 mt-16">
           <div v-if="pending">
             <div class="flex flex-col items-center mt-6">
               <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin" />
@@ -126,7 +126,7 @@
       <!-------------------------->
       <!-- Edit email pattern -->
       <!-------------------------->
-      <UModal v-model="isEditOpen">
+      <UModal v-model="isEditOpen" fullscreen>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
             <div class="flex items-center justify-between ">
@@ -234,7 +234,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { string, object, email, minLength, any, } from 'valibot'
+import { string, object, email, minLength, any, nullType, } from 'valibot'
 import checkCookie from '~/middleware/checkCookie'
 //////////////////////////
 // Variables
@@ -246,12 +246,6 @@ const isDeleteOpen = ref(false)
 const deleteSelectedEmail = ref('')
 const editSelectedEmail = ref(any())
 const toast = useToast()
-//////////////////////////
-// Set local storage value
-//////////////////////////
-onBeforeMount(() => {
-  localStorage.setItem('activeNavLink', 'emails')
-})
 //////////////////////////
 // Fetch data
 //////////////////////////
@@ -309,7 +303,7 @@ const filteredEmails = computed(() => {
 // Email schema validation
 //////////////////////////
 const createEmailSchema = object({
-  name: string([minLength(1, 'Name is required')]),
+  name: string([minLength(1, 'Name is required'),nullType()]),
   from: string([email(1, 'Invalid email')]),
   to: string([email(40, 'To email address(es) is(are) required')]),
   subject: string([minLength(1, 'Subject is required')]),

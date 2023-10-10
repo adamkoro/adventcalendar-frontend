@@ -56,7 +56,7 @@
             </div>
           </div>
         </div>
-        <div class="col-span-3 mt-20">
+        <div class="col-span-3 mt-16">
           <div v-if="pending">
             <div class="flex flex-col items-center mt-6">
               <UIcon name="i-heroicons-arrow-path-20-solid" class="text-gray-500 text-2xl animate-spin" />
@@ -241,12 +241,6 @@ const isDeleteOpen = ref(false)
 const deleteSelectedDay = ref(any())
 const editSelectedDay = ref(any())
 const toast = useToast()
-//////////////////////////
-// Set local storage value
-//////////////////////////
-onBeforeMount(() => {
-  localStorage.setItem('activeNavLink', 'days')
-})
 //////////////////////////
 // Fetch data
 //////////////////////////
