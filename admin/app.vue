@@ -2,6 +2,6 @@
   <NuxtLayout>
       <NuxtLoadingIndicator color="#FE7C3F" />
       <NuxtPage />
-    <UNotifications />
+    <UNotifications :timeout="1000" />
   </NuxtLayout>
 </template>
